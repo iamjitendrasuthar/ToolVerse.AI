@@ -319,7 +319,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
             {/* Category Header */}
             <motion.div
               // @ts-ignore
-              variants={fadeUp}
+              variants={fadeUp as any}
               className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between relative"
             >
               <div className="w-full">
@@ -383,7 +383,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                 category.tools.map((tool: any, toolIndex: number) => (
                   <motion.div
                     // @ts-ignore
-                    variants={fadeUp}
+                    variants={fadeUp as any}
                     key={tool.slug}
                     className="h-full"
                   >
