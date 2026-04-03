@@ -184,70 +184,81 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* MOBILE NAV */}
+        {/* --- MOBILE NAV (Fixed & Optimized) --- */}
         <div
-          className={`lg:hidden fixed inset-x-0 top-[75px] z-50 transition-all duration-300 ease-in-out ${
+          className={`lg:hidden absolute inset-x-0 top-full mt-3 z-50 transition-all duration-300 ease-in-out ${
             isOpen
               ? "opacity-100 translate-y-0 visible"
-              : "opacity-0 -translate-y-2 invisible"
+              : "opacity-0 -translate-y-4 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white border border-neutral-200 rounded-3xl shadow-2xl overflow-hidden max-h-[80vh] flex flex-col">
-            <div className="overflow-y-auto no-scrollbar">
-              {/* Main Links */}
-              <div className="py-2">
+          <div className="bg-white border border-neutral-200 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
+            {/* 2. Scrollable Content Area */}
+            <div className="overflow-y-auto custom-scrollbar overflow-x-hidden">
+              {/* Primary Links */}
+              <div className="p-2">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between px-5 py-3 hover:bg-neutral-50 transition-colors"
+                    className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 rounded-2xl transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-50 text-neutral-500">
-                        <link.icon size={16} />
+                      <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-neutral-50 text-neutral-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
+                        <link.icon size={18} />
                       </div>
-                      <span className="text-sm font-semibold text-neutral-800">
+                      <span className="text-[15px] font-bold text-neutral-800">
                         {link.name}
                       </span>
                     </div>
-                    <ArrowRight size={12} className="text-neutral-300" />
+                    <ArrowRight
+                      size={14}
+                      className="text-neutral-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all"
+                    />
                   </Link>
                 ))}
               </div>
 
-              {/* All Rest Categories Grid in Mobile */}
-              <div className="bg-neutral-50/50 p-4 border-y border-neutral-100">
-                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">
-                  All Categories
-                </p>
-                <div className="grid grid-cols-2 gap-2">
+              {/* Categories Grid Section */}
+              <div className="p-4 bg-neutral-50/50 border-y border-neutral-100">
+                <div className="flex items-center justify-between mb-4 px-1">
+                  <p className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.1em]">
+                    All Categories
+                  </p>
+                  <span className="h-[1px] flex-grow ml-4 bg-neutral-200/60"></span>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5">
                   {moreCategories.map((cat) => (
                     <Link
                       key={cat.name}
                       href={cat.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2 p-2 rounded-xl bg-white border border-neutral-200 shadow-sm"
+                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-neutral-200/60 shadow-sm active:scale-[0.97] transition-all"
                     >
-                      <cat.icon size={12} className="text-blue-500" />
-                      <span className="text-[11px] font-bold text-neutral-700 truncate">
+                      <div className="p-1.5 rounded-lg bg-blue-50">
+                        <cat.icon size={12} className="text-blue-600" />
+                      </div>
+                      <span className="text-[12px] font-bold text-neutral-700 truncate">
                         {cat.name}
                       </span>
                     </Link>
                   ))}
                 </div>
               </div>
+            </div>
 
-              {/* Mobile Actions */}
-              <div className="p-4 bg-white grid grid-cols-2 gap-2">
+            {/* 3. Action Buttons (Sticky at bottom of menu) */}
+            <div className="p-4 bg-white border-t border-neutral-100 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+              <div className="grid grid-cols-2 gap-3">
                 <Link
                   href="/bookmarks"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-neutral-100 text-neutral-900 font-bold text-xs"
+                  className="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-neutral-100 text-neutral-900 font-bold text-sm active:scale-95 transition-all"
                 >
-                  <Bookmark size={14} /> Saved
+                  <Bookmark size={16} /> Saved
                 </Link>
-                <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-neutral-900 text-white font-bold text-xs">
-                  <UserCircle2 size={14} /> Login
+                <button className="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-200 active:scale-95 transition-all">
+                  <UserCircle2 size={16} /> Login
                 </button>
               </div>
             </div>
