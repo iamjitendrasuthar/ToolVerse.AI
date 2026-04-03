@@ -12,8 +12,8 @@ export default async function Page({
 
   await connectToDatabase();
 
-  const tools = await Tool.find({
-    $or: [
+  const tools = await Tool.find()
+    .or([
       {
         category: {
           $regex: new RegExp(slug.replace(/-/g, " "), "i"),
@@ -24,8 +24,8 @@ export default async function Page({
           $regex: new RegExp(slug, "i"),
         },
       },
-    ],
-  }).lean();
+    ])
+    .lean();
 
   return (
     <CategoryClient
