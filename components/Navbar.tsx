@@ -230,7 +230,10 @@ export default function Navbar() {
                         />
 
                         <button
-                          onClick={() => setIsSearchOpen(false)}
+                          onClick={() => {
+                            setSearchQuery("");
+                            setIsSearchOpen(false);
+                          }}
                           className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
                         >
                           <X size={16} />
