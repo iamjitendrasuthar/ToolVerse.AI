@@ -37,6 +37,9 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dbData, setDbData] = useState({ tools: [], categories: [] });
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -71,18 +74,12 @@ export default function Navbar() {
     { name: "Email AI", href: "/category/email-ai", icon: Mail },
     { name: "Automation", href: "/category/automation", icon: Bot },
   ];
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [dbData, setDbData] = useState({ tools: [], categories: [] });
 
   useEffect(() => {
     if (isSearchOpen) {
       fetch("/api/search-data")
         .then((res) => res.json())
         .then((data) => {
-          console.log("Full Search Data:", data);
-          console.log("Tools:", data.tools);
-
           data.tools.forEach((tool: any, index: number) => {
             console.log(`Tool ${index + 1}:`, {
               name: tool.name,
@@ -96,6 +93,7 @@ export default function Navbar() {
         .catch((err) => console.error("Search fetch error:", err));
     }
   }, [isSearchOpen]);
+
   // Combined Filtering Logic (Tools + Categories)
   const results = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -209,8 +207,10 @@ export default function Navbar() {
 
               {isSearchOpen && (
                 <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] m-0">
-                  <div onClick={() => setIsSearchOpen(false)} />
-
+                  <div
+                    onClick={() => setIsSearchOpen(false)}
+                    className="absolute inset-0"
+                  />
                   {/* Wrapper to shift modal right */}
                   <div className="relative w-full max-w-3xl sm:translate-x-10 lg:translate-x-50">
                     {/* Modal */}
