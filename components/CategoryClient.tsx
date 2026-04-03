@@ -171,7 +171,7 @@ export default function CategoryClient({
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
+                  className={`cursor-pointer px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
                     activeFilter === filter
                       ? "bg-white text-blue-600 shadow-sm"
                       : "text-slate-500"
@@ -186,7 +186,7 @@ export default function CategoryClient({
             <div className="relative w-full lg:w-auto lg:ml-auto">
               <button
                 onClick={() => setIsSortOpen(!isSortOpen)}
-                className="w-full lg:w-auto flex items-center justify-between gap-4 md:gap-10 px-4 md:px-5 py-2.5 md:py-3 bg-white border border-slate-200 rounded-xl md:rounded-2xl group"
+                className="w-full lg:w-auto flex items-center justify-between gap-4 md:gap-10 px-4 md:px-5 py-2.5 md:py-3 bg-white border border-slate-200 rounded-xl md:rounded-2xl group cursor-pointer"
               >
                 <div className="flex items-center gap-3">
                   <div className="p-1.5 bg-blue-50 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
@@ -215,7 +215,7 @@ export default function CategoryClient({
                 {isSortOpen && (
                   <>
                     <div
-                      className="fixed inset-0 z-10 lg:hidden bg-slate-900/10 backdrop-blur-sm"
+                      className="fixed inset-0 z-10 lg:hidden cursor-pointer"
                       onClick={() => setIsSortOpen(false)}
                     />
 
@@ -232,7 +232,7 @@ export default function CategoryClient({
                             setSortBy(option);
                             setIsSortOpen(false);
                           }}
-                          className={`w-full flex items-center justify-between px-4 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all ${
+                          className={`cursor-pointer w-full flex items-center justify-between px-4 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all ${
                             sortBy === option
                               ? "bg-blue-50 text-blue-600"
                               : "text-slate-600"
