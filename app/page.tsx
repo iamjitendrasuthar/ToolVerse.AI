@@ -5,10 +5,11 @@ import HomeClient from "@/components/HomeClient";
 export default async function HomePage() {
   await connectToDatabase();
 
-  const allTools = await Tool.find({}).lean();
+  const allTools = await Tool.find().lean();
 
   const categoriesMap = allTools.reduce((acc: any, tool: any) => {
     const catName = tool.category;
+
     if (!acc[catName]) {
       acc[catName] = {
         name: catName,
@@ -16,13 +17,14 @@ export default async function HomePage() {
         tools: [],
       };
     }
-    // Har category mein sirf top 3 ya 6 tools dikhayein
+
     if (acc[catName].tools.length < 3) {
       acc[catName].tools.push({
         ...tool,
         _id: tool._id.toString(),
       });
     }
+
     return acc;
   }, {});
 
