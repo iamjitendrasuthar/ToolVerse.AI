@@ -224,7 +224,7 @@ export default function Navbar() {
                         <input
                           autoFocus
                           placeholder="Search AI tools, categories..."
-                          className="flex-1 bg-transparent text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
+                          className="flex-1 bg-transparent text-[16px] font-medium text-slate-800 outline-none placeholder:text-slate-400"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -420,63 +420,61 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-
-        {/* --- MOBILE NAV (Fixed & Optimized) --- */}
+        {/* --- MOBILE NAV (Refined & Compact Design) --- */}
         <div
-          className={`lg:hidden absolute inset-x-0 top-full mt-3 z-50 transition-all duration-300 ease-in-out ${
+          className={`lg:hidden absolute inset-x-0 top-full mt-2 z-50 transition-all duration-300 ease-out ${
             isOpen
               ? "opacity-100 translate-y-0 visible"
-              : "opacity-0 -translate-y-4 invisible pointer-events-none"
+              : "opacity-0 -translate-y-2 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white border border-neutral-200 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
-            {/* 2. Scrollable Content Area */}
-            <div className="overflow-y-auto custom-scrollbar overflow-x-hidden">
-              {/* Primary Links */}
-              <div className="p-2">
+          <div className="bg-white/100 border border-neutral-200/60 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col max-h-[80vh]">
+            {/* 1. Scrollable Content Area */}
+            <div className="overflow-y-auto custom-scrollbar flex-1">
+              {/* Primary Links - List Style */}
+              <div className="p-3 space-y-1">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 rounded-2xl transition-colors group"
+                    className="flex items-center gap-3 px-3 py-2.5 hover:bg-blue-50/50 rounded-xl transition-all group"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-neutral-50 text-neutral-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
-                        <link.icon size={18} />
-                      </div>
-                      <span className="text-[15px] font-bold text-neutral-800">
-                        {link.name}
-                      </span>
+                    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                      <link.icon size={16} strokeWidth={2.5} />
                     </div>
+                    <span className="text-[14px] font-semibold text-neutral-700 group-hover:text-blue-700">
+                      {link.name}
+                    </span>
                     <ArrowRight
-                      size={14}
-                      className="text-neutral-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all"
+                      size={12}
+                      className="ml-auto text-neutral-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all"
                     />
                   </Link>
                 ))}
               </div>
 
-              {/* Categories Grid Section */}
-              <div className="p-4 bg-neutral-50/50 border-y border-neutral-100">
-                <div className="flex items-center justify-between mb-4 px-1">
-                  <p className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.1em]">
-                    All Categories
+              {/* Categories Grid Section - More Compact */}
+              <div className="px-4 py-3 bg-neutral-50/80 border-y border-neutral-100">
+                <div className="flex items-center gap-3 mb-3">
+                  <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                    Explore
                   </p>
-                  <span className="h-[1px] flex-grow ml-4 bg-neutral-200/60"></span>
+                  <div className="h-[1px] flex-1 bg-neutral-200"></div>
                 </div>
-                <div className="grid grid-cols-2 gap-2.5">
+
+                <div className="grid grid-cols-2 gap-2">
                   {moreCategories.map((cat) => (
                     <Link
                       key={cat.name}
                       href={cat.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-neutral-200/60 shadow-sm active:scale-[0.97] transition-all"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-neutral-200/50 hover:border-blue-200 hover:shadow-sm active:scale-95 transition-all"
                     >
-                      <div className="p-1.5 rounded-lg bg-blue-50">
+                      <div className="p-1.5 rounded-md bg-blue-50 group-hover:bg-blue-100">
                         <cat.icon size={12} className="text-blue-600" />
                       </div>
-                      <span className="text-[12px] font-bold text-neutral-700 truncate">
+                      <span className="text-[11px] font-medium text-neutral-600 truncate">
                         {cat.name}
                       </span>
                     </Link>
@@ -485,17 +483,17 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* 3. Action Buttons (Sticky at bottom of menu) */}
-            <div className="p-4 bg-white border-t border-neutral-100 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-              <div className="grid grid-cols-2 gap-3">
+            {/* 2. Action Buttons (Fixed Bottom) */}
+            <div className="p-3 bg-white border-t border-neutral-100">
+              <div className="grid grid-cols-2 gap-2">
                 <Link
                   href="/bookmarks"
-                  className="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-neutral-100 text-neutral-900 font-bold text-sm active:scale-95 transition-all"
+                  className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-neutral-100 text-neutral-700 font-bold text-[13px] hover:bg-neutral-200 transition-colors"
                 >
-                  <Bookmark size={16} /> Saved
+                  <Bookmark size={14} /> Saved
                 </Link>
-                <button className="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-200 active:scale-95 transition-all">
-                  <UserCircle2 size={16} /> Login
+                <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-md shadow-blue-100 hover:bg-blue-700 active:scale-95 transition-all">
+                  <UserCircle2 size={14} /> Account
                 </button>
               </div>
             </div>
