@@ -16,12 +16,17 @@ import {
   Zap,
   Rocket,
   Cpu,
+  LayoutGrid,
+  X,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function HomeClient({ categoryData }: { categoryData: any[] }) {
   const containerRef = useRef(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dbData, setDbData] = useState({ tools: [], categories: [] });
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -42,6 +47,34 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
     },
   };
 
+  // --- FETCH SEARCH DATA ---
+  useEffect(() => {
+    if (isSearchOpen) {
+      fetch("/api/search-data")
+        .then((res) => res.json())
+        .then((data) => setDbData(data))
+        .catch((err) => console.error("Search fetch error:", err));
+    }
+  }, [isSearchOpen]);
+
+  // --- FILTER RESULTS ---
+  const results = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return { tools: [], categories: [] };
+
+    return {
+      tools: dbData.tools
+        .filter(
+          (t: any) =>
+            t.name.toLowerCase().includes(query) ||
+            t.category?.toLowerCase().includes(query),
+        )
+        .slice(0, 6),
+      categories: dbData.categories
+        .filter((c: any) => c.name.toLowerCase().includes(query))
+        .slice(0, 4),
+    };
+  }, [searchQuery, dbData]);
   const staggerContainer = {
     hidden: { opacity: 0 },
     show: {
@@ -110,6 +143,145 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
       ref={containerRef}
       className="min-h-screen bg-[#fafcff] text-slate-900 overflow-hidden selection:bg-blue-200 selection:text-blue-900 pb-20"
     >
+      {/* --- SEARCH MODAL (INTEGRATED) --- */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+          {" "}
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"
+            onClick={() => {
+              setIsSearchOpen(false);
+              setSearchQuery("");
+            }}
+          />
+          {/* Modal Card */}
+          <div className="relative z-[10000] w-full max-w-3xl overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] animate-in fade-in zoom-in-95 duration-200">
+            {" "}
+            {/* Header */}
+            <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+              <Search className="text-blue-600" size={20} />
+              <input
+                autoFocus
+                placeholder="Search 1000+ AI tools..."
+                className="flex-1 bg-transparent text-lg font-semibold text-slate-800 outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            {/* Results Area */}
+            <div className="max-h-[60vh] overflow-y-auto px-5 py-4 custom-scrollbar">
+              {!searchQuery ? (
+                <div className="py-12 text-center flex flex-col items-center">
+                  <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
+                    <Sparkles size={28} />
+                  </div>
+                  <h3 className="font-bold text-slate-800">
+                    Ready to Explore?
+                  </h3>
+                  <p className="text-sm text-slate-500 max-w-xs mt-1">
+                    Search for any AI category like "Video", "Coding", or
+                    "Design".
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Results for Categories */}
+                  {results.categories.length > 0 && (
+                    <section>
+                      <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-1">
+                        Categories
+                      </h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {results.categories.map((cat: any) => (
+                          <Link
+                            key={cat.slug}
+                            href={cat.href}
+                            className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-blue-50 transition-colors border border-slate-100"
+                          >
+                            <div className="p-2 bg-white rounded-lg shadow-sm">
+                              <LayoutGrid size={14} className="text-blue-600" />
+                            </div>
+                            <span className="text-sm font-bold text-slate-700">
+                              {cat.name}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Results for Tools */}
+                  {results.tools.length > 0 && (
+                    <section>
+                      <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-1">
+                        Top Tools
+                      </h3>
+                      <div className="space-y-2">
+                        {results.tools.map((tool: any) => (
+                          <Link
+                            key={tool.slug}
+                            href={`/tool/${tool.slug}`}
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors group border border-transparent hover:border-slate-100"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
+                                <img
+                                  src={
+                                    tool.imageUrl ||
+                                    `https://ui-avatars.com/api/?name=${tool.name}`
+                                  }
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-slate-800 text-sm">
+                                  {tool.name}
+                                </h4>
+                                <p className="text-xs text-slate-500">
+                                  {tool.category}
+                                </p>
+                              </div>
+                            </div>
+                            <ArrowRight
+                              size={16}
+                              className="text-slate-300 group-hover:text-blue-600 transition-all group-hover:translate-x-1"
+                            />
+                          </Link>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* No Results */}
+                  {results.tools.length === 0 &&
+                    results.categories.length === 0 && (
+                      <div className="py-12 text-center text-slate-400 font-medium">
+                        No results found for "{searchQuery}"
+                      </div>
+                    )}
+                </div>
+              )}
+            </div>
+            {/* Footer */}
+            <div className="bg-slate-50 px-5 py-3 border-t border-slate-100 flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                ToolsVerse AI Index
+              </span>
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
+                Live Search
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* --- REFINED AMBIENT BACKGROUND --- */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Subtle grid fading at the bottom */}
@@ -182,7 +354,12 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-[30px] blur opacity-10 group-focus-within:opacity-25 transition duration-500"></div>
 
-            <div className="relative flex items-center bg-white border border-slate-200/80 rounded-2xl p-1.5 shadow-xl transition-all duration-300 focus-within:border-blue-400 focus-within:shadow-blue-100/50">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-[30px] blur opacity-10 group-focus-within:opacity-25 transition duration-500"></div>
+
+            <div
+              onClick={() => setIsSearchOpen(true)}
+              className="relative flex items-center bg-white border border-slate-200/80 rounded-2xl p-1.5 shadow-xl cursor-pointer hover:border-blue-400 transition-all"
+            >
               <div className="flex items-center flex-1 px-4 gap-3">
                 <Search
                   className="text-slate-400 group-focus-within:text-blue-600 transition-colors"
@@ -196,7 +373,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
               </div>
 
               <button className="bg-slate-900 hover:bg-blue-600 text-white px-6 md:px-8 py-3 rounded-[14px] font-bold text-sm md:text-base transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
-                Find Tools
+                Search Tools
                 <ArrowRight size={18} />
               </button>
             </div>
