@@ -84,7 +84,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
 
   const trendingToolNames = [
     "ChatGPT",
-    "Gemini",
+    "Gemini", 
     "Grok",
     "Perplexity",
     "DeepSeek",
