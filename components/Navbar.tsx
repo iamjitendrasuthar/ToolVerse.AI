@@ -208,11 +208,11 @@ export default function Navbar() {
               </button>
 
               {isSearchOpen && (
-                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[9vh] sm:pt-[10vh]">
+                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] m-0">
                   <div onClick={() => setIsSearchOpen(false)} />
 
                   {/* Wrapper to shift modal right */}
-                  <div className="relative w-full max-w-2xl sm:translate-x-10 lg:translate-x-50">
+                  <div className="relative w-full max-w-3xl sm:translate-x-10 lg:translate-x-50">
                     {/* Modal */}
                     <div className="relative w-full overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.12)] animate-in fade-in zoom-in-95 duration-200">
                       {/* Header */}
