@@ -420,7 +420,7 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-        {/* --- MOBILE NAV (Refined & Compact Design) --- */}
+        {/* --- MOBILE NAV (Scrollable & Future-Proof) --- */}
         <div
           className={`lg:hidden absolute inset-x-0 top-full mt-2 z-50 transition-all duration-300 ease-out ${
             isOpen
@@ -428,53 +428,53 @@ export default function Navbar() {
               : "opacity-0 -translate-y-2 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white/100 border border-neutral-200/60 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col max-h-[80vh]">
-            {/* 1. Scrollable Content Area */}
-            <div className="overflow-y-auto custom-scrollbar flex-1">
-              {/* Primary Links - List Style */}
-              <div className="p-3 space-y-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 hover:bg-blue-50/50 rounded-xl transition-all group"
-                  >
-                    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                      <link.icon size={16} strokeWidth={2.5} />
-                    </div>
-                    <span className="text-[14px] font-semibold text-neutral-700 group-hover:text-blue-700">
-                      {link.name}
-                    </span>
-                    <ArrowRight
-                      size={12}
-                      className="ml-auto text-neutral-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all"
-                    />
-                  </Link>
-                ))}
+          <div className="bg-white border border-neutral-200/70 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col max-h-[85vh]">
+            {/* 1. Main Links Section (Static/Non-scrollable) */}
+            <div className="p-3 pb-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 rounded-2xl transition-all group"
+                >
+                  <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <link.icon size={16} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-[14px] font-bold text-neutral-800">
+                    {link.name}
+                  </span>
+                  <ArrowRight
+                    size={12}
+                    className="ml-auto text-neutral-300 group-hover:text-blue-500 transition-all"
+                  />
+                </Link>
+              ))}
+            </div>
+
+            {/* 2. Categories Section (Internal Scroll Area) */}
+            <div className="px-4 py-4 bg-neutral-50/50 border-t border-neutral-100">
+              <div className="flex items-center gap-3 mb-3 px-1">
+                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                  Explore Categories
+                </p>
+                <div className="h-[1px] flex-1 bg-neutral-200/60"></div>
               </div>
 
-              {/* Categories Grid Section - More Compact */}
-              <div className="px-4 py-3 bg-neutral-50/80 border-y border-neutral-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
-                    Explore
-                  </p>
-                  <div className="h-[1px] flex-1 bg-neutral-200"></div>
-                </div>
-
+              {/* Scrollable Container with Fixed Height */}
+              <div className="max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
                 <div className="grid grid-cols-2 gap-2">
                   {moreCategories.map((cat) => (
                     <Link
                       key={cat.name}
                       href={cat.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-neutral-200/50 hover:border-blue-200 hover:shadow-sm active:scale-95 transition-all"
+                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-neutral-200/60 hover:border-blue-300 transition-all active:scale-95 shadow-sm"
                     >
-                      <div className="p-1.5 rounded-md bg-blue-50 group-hover:bg-blue-100">
+                      <div className="p-1.5 rounded-lg bg-blue-50">
                         <cat.icon size={12} className="text-blue-600" />
                       </div>
-                      <span className="text-[11px] font-medium text-neutral-600 truncate">
+                      <span className="text-[12px] font-semibold text-neutral-700 truncate">
                         {cat.name}
                       </span>
                     </Link>
@@ -483,17 +483,17 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* 2. Action Buttons (Fixed Bottom) */}
-            <div className="p-3 bg-white border-t border-neutral-100">
-              <div className="grid grid-cols-2 gap-2">
+            {/* 3. Sticky Action Footer */}
+            <div className="p-4 bg-white border-t border-neutral-100 mt-auto">
+              <div className="flex gap-2">
                 <Link
                   href="/bookmarks"
-                  className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-neutral-100 text-neutral-700 font-bold text-[13px] hover:bg-neutral-200 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-neutral-100 text-neutral-800 font-bold text-[13px] active:scale-95 transition-all"
                 >
                   <Bookmark size={14} /> Saved
                 </Link>
-                <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-md shadow-blue-100 hover:bg-blue-700 active:scale-95 transition-all">
-                  <UserCircle2 size={14} /> Account
+                <button className="flex-[1.5] flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                  <UserCircle2 size={14} /> Login
                 </button>
               </div>
             </div>
