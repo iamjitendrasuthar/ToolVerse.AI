@@ -195,7 +195,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                 />
               </div>
 
-              <button className="bg-slate-900 hover:bg-blue-600 text-white px-6 md:px-8 py-3 rounded-[14px] font-bold text-sm md:text-base transition-all active:scale-95 flex items-center gap-2">
+              <button className="bg-slate-900 hover:bg-blue-600 text-white px-6 md:px-8 py-3 rounded-[14px] font-bold text-sm md:text-base transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
                 Find Tools
                 <ArrowRight size={18} />
               </button>
@@ -206,7 +206,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
               {["Video Gen", "Coding", "Writing"].map((tag) => (
                 <button
                   key={tag}
-                  className="whitespace-nowrap text-[12px] font-bold text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-wider"
+                  className="whitespace-nowrap text-[12px] font-bold text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-wider cursor-pointer"
                 >
                   #{tag}
                 </button>
@@ -389,7 +389,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                     >
                       {/* Floating Bookmark - Smaller for tight grid */}
                       <button
-                        className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm"
+                        className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm cursor-pointer"
                         onClick={(e) => e.preventDefault()}
                       >
                         <Bookmark size={14} strokeWidth={2.5} />
@@ -528,11 +528,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
-            <button className="w-full sm:w-auto min-w-[220px] bg-white text-slate-900 px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg font-bold hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all duration-300">
-              Submit Your Tool
-            </button>
-
-            <button className="w-full sm:w-auto min-w-[220px] bg-slate-800/50 backdrop-blur-md text-white border border-slate-700 px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg font-bold hover:bg-slate-800 transition-all duration-300">
+            <button className="w-full sm:w-auto min-w-[220px] bg-slate-800/50 backdrop-blur-md text-white border border-slate-700 px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg font-bold hover:bg-slate-800 transition-all duration-300 cursor-pointer">
               Explore Network
             </button>
           </div>

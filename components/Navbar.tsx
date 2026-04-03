@@ -133,19 +133,19 @@ export default function Navbar() {
             {/* --- ACTION BUTTONS --- */}
             <div className="flex items-center space-x-2 md:space-x-3">
               {/* Search Icon */}
-              <button className="p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all">
+              <button className="p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer">
                 <Search size={20} />
               </button>
 
               {/* Bookmark Icon (Added) */}
-              <button className="relative p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all group">
+              <button className="relative p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all group cursor-pointer">
                 <Bookmark size={20} />
                 {/* Visual Indicator Dot */}
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-600 rounded-full border-2 border-white scale-0 group-hover:scale-100 transition-transform" />
               </button>
 
               {/* Login/User Icon (Added) */}
-              <button className="hidden sm:flex items-center gap-2 p-1 pr-3 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all border border-neutral-200/50">
+              <button className="hidden sm:flex items-center gap-2 p-1 pr-3 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all border border-neutral-200/50 cursor-pointer">
                 <div className="bg-white p-1.5 rounded-full shadow-sm">
                   <UserCircle2 size={18} className="text-neutral-600" />
                 </div>
@@ -154,19 +154,10 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* Submit Tool Button */}
-              <button className="hidden md:flex group items-center gap-2 bg-neutral-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-blue-600 transition-all duration-300">
-                Submit Tool
-                <ArrowRight
-                  size={16}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </button>
-
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden p-2 bg-neutral-100 text-neutral-600 rounded-xl active:scale-95 transition-all"
+                className="lg:hidden p-2 bg-neutral-100 text-neutral-600 rounded-xl active:scale-95 transition-all cursor-pointer"
               >
                 {isOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
