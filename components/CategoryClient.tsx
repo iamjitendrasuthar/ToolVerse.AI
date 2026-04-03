@@ -90,14 +90,14 @@ export default function CategoryClient({
   }, [searchQuery, activeFilter, sortBy, initialTools]);
 
   return (
-    <div className="min-h-screen bg-[#fafcff] text-slate-900 pb-20 selection:bg-blue-100">
+    <main className="min-h-screen bg-[#fafcff] text-slate-900 overflow-hidden selection:bg-blue-200 selection:text-blue-900 pb-20">
+      {" "}
       {/* Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-200/20 blur-[80px] md:blur-[120px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-indigo-200/20 blur-[70px] md:blur-[100px] rounded-full" />
       </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-6 pt-30 md:pt-32">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-xs md:text-sm font-bold text-slate-400 mb-6 md:mb-8 overflow-x-auto whitespace-nowrap no-scrollbar">
           <Link href="/" className="hover:text-blue-600 transition-colors">
@@ -385,7 +385,6 @@ export default function CategoryClient({
           </AnimatePresence>
         </section>
       </div>
-
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -396,6 +395,6 @@ export default function CategoryClient({
           scrollbar-width: none;
         }
       `}</style>
-    </div>
+    </main>
   );
 }
