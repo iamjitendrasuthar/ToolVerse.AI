@@ -18,7 +18,7 @@ export default async function HomePage() {
       };
     }
 
-    if (acc[catName].tools.length < 3) {
+    if (acc[catName].tools.length < 6) {
       acc[catName].tools.push({
         ...tool,
         _id: tool._id.toString(),

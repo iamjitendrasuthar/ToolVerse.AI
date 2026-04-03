@@ -12,14 +12,10 @@ import {
   Image as ImageIcon,
   Code,
   PenTool,
-  Command,
   Bookmark,
   Zap,
   Rocket,
-  Globe,
-  Layers,
   Cpu,
-  Award,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -84,7 +80,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
 
   const trendingToolNames = [
     "ChatGPT",
-    "Gemini", 
+    "Gemini",
     "Grok",
     "Perplexity",
     "DeepSeek",
@@ -306,7 +302,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
       </motion.section>
 
       {/* --- DYNAMIC CATEGORY DIRECTORY --- */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-20 sm:space-y-24 lg:space-y-32 relative z-20 py-24 sm:py-20 lg:py-24">
+      <section className="px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-16 sm:space-y-20 relative z-20 py-12 sm:py-16">
         {filteredCategories.map((category, index) => (
           <motion.div
             key={category.slug}
@@ -314,71 +310,71 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
             variants={staggerContainer}
-            className="flex flex-col gap-8 sm:gap-10 lg:gap-12 relative"
+            className="flex flex-col gap-6 sm:gap-8 relative"
           >
             {/* Category Header */}
             <motion.div
               // @ts-ignore
               variants={fadeUp as any}
-              className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between relative"
+              className="flex flex-col gap-1 sm:gap-2 relative mb-1 sm:mb-2"
             >
-              <div className="w-full">
-                <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-4">
-                  <div className="shrink-0 p-2.5 sm:p-3.5 bg-white border border-slate-200 rounded-2xl text-blue-600 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              {/* Top Row: Icon + Title AND Button */}
+              <div className="flex items-center justify-between gap-4 w-full">
+                <div className="flex items-center gap-3 min-w-0">
+                  {/* Icon Box */}
+                  <div className="shrink-0 p-2 sm:p-2.5 bg-white border border-slate-200 rounded-xl text-blue-600 shadow-sm">
                     {category.name.includes("Coding") ? (
                       <Code
-                        size={22}
-                        className="sm:w-7 sm:h-7"
+                        size={18}
+                        className="sm:w-5 sm:h-5"
                         strokeWidth={2.5}
                       />
                     ) : category.name.includes("Video") ? (
                       <PlayCircle
-                        size={22}
-                        className="sm:w-7 sm:h-7"
+                        size={18}
+                        className="sm:w-5 sm:h-5"
                         strokeWidth={2.5}
                       />
                     ) : category.name.includes("Image") ? (
                       <ImageIcon
-                        size={22}
-                        className="sm:w-7 sm:h-7"
+                        size={18}
+                        className="sm:w-5 sm:h-5"
                         strokeWidth={2.5}
                       />
                     ) : (
                       <PenTool
-                        size={22}
-                        className="sm:w-7 sm:h-7"
+                        size={18}
+                        className="sm:w-5 sm:h-5"
                         strokeWidth={2.5}
                       />
                     )}
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-black tracking-tight text-slate-900 leading-tight">
+                  {/* Title */}
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight text-slate-900 truncate">
                     {category.name}
                   </h2>
                 </div>
 
-                <p className="text-slate-500 text-sm sm:text-base md:text-lg lg:text-xl ml-0 sm:ml-[4.5rem] max-w-xl font-medium leading-relaxed">
-                  Hand-picked tools to supercharge your{" "}
-                  {category.name.toLowerCase()} workflows.
-                </p>
+                {/* Button: Always on the Right */}
+                {category.name !== "Top Trending" && (
+                  <Link
+                    href={`/category/${category.slug}`}
+                    className="group shrink-0 inline-flex items-center justify-center bg-white border border-slate-200 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 shadow-sm transition-all duration-300 whitespace-nowrap"
+                  >
+                    <span className="hidden xs:inline">View Directory</span>
+                    <span className="xs:hidden">View All</span>
+                    <ArrowRight
+                      size={14}
+                      className="ml-1 sm:ml-1.5 group-hover:translate-x-1 transition-transform"
+                    />
+                  </Link>
+                )}
               </div>
-
-              {category.name !== "Top Trending" && (
-                <Link
-                  href={`/category/${category.slug}`}
-                  className="group inline-flex items-center justify-center w-full sm:w-fit md:w-auto bg-white border border-slate-200 px-5 sm:px-6 py-3 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                  View Directory
-                  <ArrowRight
-                    size={16}
-                    className="ml-2 group-hover:translate-x-1.5 transition-transform"
-                  />
-                </Link>
-              )}
             </motion.div>
 
-            {/* Tool Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+            {/* Tool Cards Grid - Updated for 2 per row (mobile) and 6 per row (desktop) */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
               {category.tools.length > 0 ? (
                 category.tools.map((tool: any, toolIndex: number) => (
                   <motion.div
@@ -389,24 +385,19 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                   >
                     <Link
                       href={`/tool/${tool.slug}`}
-                      className="group flex flex-col h-full bg-white border border-slate-200/80 rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden hover:border-blue-200 hover:shadow-[0_20px_40px_rgba(37,99,235,0.06)] hover:-translate-y-1 sm:hover:-translate-y-1.5 transition-all duration-500 relative"
+                      className="group flex flex-col h-full bg-white border border-slate-200/80 rounded-[1.25rem] overflow-hidden hover:border-blue-200 hover:shadow-[0_15px_30px_rgba(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-500 relative"
                     >
-                      {/* Floating Bookmark */}
+                      {/* Floating Bookmark - Smaller for tight grid */}
                       <button
-                        className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 p-2 sm:p-2.5 bg-white/80 hover:bg-white backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm sm:transform sm:translate-y-2 sm:group-hover:translate-y-0"
+                        className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm"
                         onClick={(e) => e.preventDefault()}
                       >
-                        <Bookmark
-                          size={16}
-                          className="sm:w-[18px] sm:h-[18px]"
-                          strokeWidth={2.5}
-                        />
+                        <Bookmark size={14} strokeWidth={2.5} />
                       </button>
 
-                      {/* Top Banner */}
-                      <div className="h-[160px] sm:h-[180px] w-full relative overflow-hidden bg-slate-100 p-2">
-                        <div className="w-full h-full rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden relative border border-slate-200/50">
-                          <div className="absolute inset-0 bg-slate-900/5 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                      {/* Top Banner - Height reduced for smaller cards */}
+                      <div className="h-[100px] w-full relative overflow-hidden bg-slate-100 p-1.5">
+                        <div className="w-full h-full rounded-xl overflow-hidden relative border border-slate-200/50">
                           <img
                             src={
                               tool.imageUrl ||
@@ -419,69 +410,56 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                       </div>
 
                       {/* Content */}
-                      <div className="px-4 sm:px-6 pt-8 sm:pt-10 pb-5 sm:pb-6 flex flex-col flex-grow relative bg-white z-20">
-                        {/* Avatar */}
-                        <div className="absolute -top-8 sm:-top-10 left-4 sm:left-6 w-[3.75rem] h-[3.75rem] sm:w-[4.5rem] sm:h-[4.5rem] rounded-2xl bg-white border-[4px] border-white shadow-[0_8px_20px_rgba(0,0,0,0.06)] flex items-center justify-center overflow-hidden z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                      <div className="px-3 pt-6 pb-4 flex flex-col flex-grow relative bg-white z-20">
+                        {/* Avatar - Scaled down */}
+                        <div className="absolute -top-6 left-3 w-10 h-10 rounded-xl bg-white border-[3px] border-white shadow-md flex items-center justify-center overflow-hidden z-20 group-hover:-translate-y-0.5 transition-transform">
                           <img
-                            src={`https://ui-avatars.com/api/?name=${tool.name}&background=random&color=fff&size=150&bold=true`}
+                            src={`https://ui-avatars.com/api/?name=${tool.name}&background=random&color=fff&size=100&bold=true`}
                             alt={tool.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
 
-                        <div className="flex justify-between items-start gap-3 mt-2 mb-3">
-                          <h3 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                        <div className="flex justify-between items-start gap-1 mt-1 mb-1.5">
+                          <h3 className="text-sm font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
                             {tool.name}
                           </h3>
-
                           {tool.rating >= 4.8 && (
-                            <div
-                              className="shrink-0 bg-blue-50 text-blue-500 p-1.5 rounded-full"
-                              title="Top Rated"
-                            >
-                              <CheckCircle2
-                                size={14}
-                                className="sm:w-4 sm:h-4 fill-blue-100"
-                              />
-                            </div>
+                            <CheckCircle2
+                              size={12}
+                              className="text-blue-500 fill-blue-50 shrink-0"
+                            />
                           )}
                         </div>
 
-                        <p className="text-slate-500 text-sm leading-relaxed font-medium line-clamp-3 mb-5 sm:mb-6 flex-grow">
+                        <p className="text-slate-500 text-[11px] leading-relaxed font-medium line-clamp-2 mb-3 flex-grow">
                           {tool.description}
                         </p>
 
-                        {/* Tags */}
-                        <div className="flex items-center gap-2 mb-5 sm:mb-6 flex-wrap">
+                        {/* Tags - Scaled down for density */}
+                        <div className="flex items-center gap-1.5 mb-3 flex-wrap">
                           <span
-                            className={`text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-xl border ${
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border ${
                               tool.pricing === "Free"
-                                ? "bg-emerald-50 border-emerald-100/50 text-emerald-700"
-                                : tool.pricing === "Freemium"
-                                  ? "bg-blue-50 border-blue-100/50 text-blue-700"
-                                  : "bg-purple-50 border-purple-100/50 text-purple-700"
+                                ? "bg-emerald-50 border-emerald-100 text-emerald-700"
+                                : "bg-blue-50 border-blue-100 text-blue-700"
                             }`}
                           >
                             {tool.pricing}
                           </span>
-
-                          <span className="text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/50 text-slate-500 line-clamp-1">
-                            {tool.category}
-                          </span>
                         </div>
 
                         {/* Footer */}
-                        <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-slate-100 mt-auto gap-3">
-                          <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 sm:px-3 py-1.5 rounded-xl border border-amber-100/50 shrink-0">
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+                          <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">
                             <Star
-                              size={13}
-                              className="sm:w-[14px] sm:h-[14px] fill-amber-400 text-amber-500"
+                              size={10}
+                              className="fill-amber-400 text-amber-500"
                             />
-                            <span className="font-bold text-amber-700 text-xs sm:text-sm">
+                            <span className="font-bold text-amber-700 text-[10px]">
                               {tool.rating}
                             </span>
                           </div>
-
                           <div className="flex items-center text-xs sm:text-sm font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
                             Explore
                             <ArrowUpRight
