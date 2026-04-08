@@ -463,10 +463,14 @@ export default function Navbar() {
                 </div>
               )}
 
-              <button className="relative p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all group cursor-pointer">
+              <Link
+                href="/bookmarks"
+                className="relative inline-flex items-center justify-center p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all group cursor-pointer"
+              >
                 <Bookmark size={20} />
+                {/* Notification dot effect */}
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-600 rounded-full border-2 border-white scale-0 group-hover:scale-100 transition-transform" />
-              </button>
+              </Link>
 
               <button>
                 <Link
@@ -567,12 +571,14 @@ export default function Navbar() {
               <div className="flex gap-2">
                 <Link
                   href="/bookmarks"
+                  onClick={() => setIsOpen(false)}
                   className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-neutral-100 text-neutral-800 font-bold text-[13px] active:scale-95 transition-all"
                 >
                   <Bookmark size={14} /> Saved
                 </Link>
                 <Link
                   href="/login"
+                  onClick={() => setIsOpen(false)}
                   className="flex-[1.5] flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-lg shadow-blue-100 active:scale-95 transition-all"
                 >
                   <UserCircle2 size={14} />
