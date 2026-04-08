@@ -1,6 +1,11 @@
-import Navbar from "@/components/Navbar";
 import "./globals.css";
-import Footer from "@/components/Footer";
+import LayoutWrapper from "@/components/LayoutWrapper";
+
+export const metadata = {
+  title: "ToolsVerse AI",
+  description:
+    "The definitive directory for next-generation artificial intelligence.",
+};
 
 export default function RootLayout({
   children,
@@ -9,12 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className="min-h-full flex flex-col"
-      >
-        <Navbar />
-        {children}
-        <Footer />
+      <body className="min-h-full flex flex-col bg-[#fafcff]">
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );
