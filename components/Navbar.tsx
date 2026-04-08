@@ -160,7 +160,6 @@ export default function Navbar() {
     },
     { name: "New Arrivals", href: "/new-arrivals", icon: Sparkles },
     { name: "Trending", href: "/trending", icon: TrendingUp },
-    { name: "Submit AI", href: "/submit", icon: PlusCircle },
   ];
 
   useEffect(() => {
