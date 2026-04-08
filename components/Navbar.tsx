@@ -30,7 +30,26 @@ import {
   Bot,
   BarChart3,
   Mail,
-  Cpu,
+  Layers,
+  Briefcase,
+  PlusCircle,
+  Box,
+  Headphones,
+  Gamepad2,
+  Users,
+  Scale,
+  Presentation,
+  Building,
+  Microscope,
+  Languages,
+  FileText,
+  Megaphone,
+  Lightbulb,
+  GraduationCap,
+  Terminal,
+  Rocket,
+  DollarSign,
+  Edit3,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -47,32 +66,101 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Primary links shown directly on Navbar
-  const navLinks = [
-    { name: "Home", href: "/", icon: Home },
+  // 1. Categories List
+  const categoriesList = [
     { name: "Coding", href: "/category/coding-tools", icon: Code2 },
     { name: "Images", href: "/category/image-generation", icon: ImageIcon },
     { name: "Video", href: "/category/video-editing", icon: Video },
     { name: "Writing", href: "/category/writing-tools", icon: PenTool },
-  ];
-
-  // All other categories for "More" and Mobile Menu
-  const moreCategories = [
     { name: "Audio & Voice", href: "/category/audio-tools", icon: Mic2 },
-    { name: "Productivity", href: "/category/productivity-tools", icon: Zap },
-    { name: "Education", href: "/category/study-tools", icon: BookOpen },
-    { name: "Marketing", href: "/category/marketing-tools", icon: TrendingUp },
+    { name: "Music", href: "/category/music-generation", icon: Music },
+    { name: "3D & Animation", href: "/category/3d-animation", icon: Box },
     { name: "Design & UI", href: "/category/design-tools", icon: Palette },
-    { name: "Chatbots", href: "/category/chatbots", icon: MessageSquare },
+    {
+      name: "Presentations",
+      href: "/category/presentations",
+      icon: Presentation,
+    },
+    { name: "Business", href: "/category/business", icon: Briefcase },
+    { name: "Marketing", href: "/category/marketing-tools", icon: TrendingUp },
     { name: "SEO Tools", href: "/category/seo", icon: Globe },
     { name: "Social Media", href: "/category/social-media", icon: Share2 },
+    { name: "Email AI", href: "/category/email-ai", icon: Mail },
+    { name: "Productivity", href: "/category/productivity-tools", icon: Zap },
+    { name: "Automation", href: "/category/automation", icon: Bot },
     {
       name: "Data & Analysis",
       href: "/category/data-analysis",
       icon: BarChart3,
     },
-    { name: "Email AI", href: "/category/email-ai", icon: Mail },
-    { name: "Automation", href: "/category/automation", icon: Bot },
+    { name: "Research", href: "/category/research", icon: Microscope },
+    { name: "Chatbots", href: "/category/chatbots", icon: MessageSquare },
+    {
+      name: "Customer Support",
+      href: "/category/customer-support",
+      icon: Headphones,
+    },
+    { name: "Translation", href: "/category/translation", icon: Languages },
+    { name: "Education", href: "/category/study-tools", icon: BookOpen },
+    { name: "HR & Recruiting", href: "/category/hr-recruiting", icon: Users },
+    { name: "Legal", href: "/category/legal", icon: Scale },
+    { name: "Real Estate", href: "/category/real-estate", icon: Building },
+    { name: "Gaming", href: "/category/gaming", icon: Gamepad2 },
+  ];
+
+  // 2. Comprehensive Use Cases List
+  const useCasesList = [
+    // Persona Based
+    { name: "For Students", href: "/use-case/students", icon: GraduationCap },
+    { name: "For Developers", href: "/use-case/developers", icon: Terminal },
+    { name: "For Designers", href: "/use-case/designers", icon: PenTool },
+    { name: "For Marketers", href: "/use-case/marketers", icon: Megaphone },
+    { name: "For Creators", href: "/use-case/creators", icon: Video },
+    { name: "For Writers", href: "/use-case/writers", icon: FileText },
+    { name: "For Startups", href: "/use-case/startups", icon: Rocket },
+    {
+      name: "For Researchers",
+      href: "/use-case/researchers",
+      icon: Microscope,
+    },
+    { name: "For Sales Teams", href: "/use-case/sales", icon: DollarSign },
+    { name: "For HR & Recruiting", href: "/use-case/hr", icon: Users },
+
+    // Task Based
+    { name: "Writing Blogs", href: "/use-case/blog-writing", icon: Edit3 },
+    { name: "SEO Optimization", href: "/use-case/seo", icon: Search },
+    { name: "Data Analysis", href: "/use-case/data-analysis", icon: BarChart3 },
+    {
+      name: "Customer Support",
+      href: "/use-case/customer-support",
+      icon: Headphones,
+    },
+    {
+      name: "Idea Brainstorming",
+      href: "/use-case/brainstorming",
+      icon: Lightbulb,
+    },
+    { name: "Translation", href: "/use-case/translation", icon: Languages },
+  ];
+
+  // 3. Main Navigation Links
+  const navLinks = [
+    { name: "Home", href: "/", icon: Home },
+    {
+      name: "Categories",
+      isDropdown: true,
+      items: categoriesList,
+      icon: Layers,
+    },
+    {
+      name: "Use Cases",
+      isDropdown: true,
+      items: useCasesList,
+      icon: Briefcase,
+    },
+    { name: "New Arrivals", href: "/new-arrivals", icon: Sparkles },
+    { name: "Trending", href: "/trending", icon: TrendingUp },
+    { name: "Submit AI", href: "/submit", icon: PlusCircle },
   ];
 
   useEffect(() => {
@@ -80,21 +168,13 @@ export default function Navbar() {
       fetch("/api/search-data")
         .then((res) => res.json())
         .then((data) => {
-          data.tools.forEach((tool: any, index: number) => {
-            console.log(`Tool ${index + 1}:`, {
-              name: tool.name,
-              imageUrl: tool.imageUrl,
-              fullTool: tool,
-            });
-          });
-
           setDbData(data);
         })
         .catch((err) => console.error("Search fetch error:", err));
     }
   }, [isSearchOpen]);
 
-  // Combined Filtering Logic (Tools + Categories)
+  // Combined Filtering Logic
   const results = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return { tools: [], categories: [] };
@@ -106,12 +186,13 @@ export default function Navbar() {
             t.name.toLowerCase().includes(query) ||
             t.category?.toLowerCase().includes(query),
         )
-        .slice(0, 6), // Top 6 results dikhane ke liye
+        .slice(0, 6),
       categories: dbData.categories
         .filter((c: any) => c.name.toLowerCase().includes(query))
         .slice(0, 4),
     };
   }, [searchQuery, dbData]);
+
   return (
     <div className="fixed top-4 inset-x-0 z-50 flex justify-center w-full px-6 pointer-events-none">
       <nav
@@ -141,11 +222,54 @@ export default function Navbar() {
             {/* DESKTOP NAV */}
             <div className="hidden lg:flex items-center space-x-1 bg-neutral-100/50 p-1 rounded-full border border-neutral-200/50">
               {navLinks.map((link) => {
+                // Dropdowns
+                if (link.isDropdown) {
+                  return (
+                    <div key={link.name} className="relative group">
+                      <button className="px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full flex items-center gap-1.5 text-neutral-600 hover:text-neutral-900 hover:bg-white/60 cursor-pointer">
+                        <link.icon size={16} className="opacity-70" />
+                        {link.name}
+                        <ChevronDown
+                          size={14}
+                          className="group-hover:rotate-180 transition-transform duration-300"
+                        />
+                      </button>
+
+                      {/* Mega Dropdown Style */}
+                      <div className="absolute top-full left-0 pt-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                        <div className="w-[720px] p-4 bg-white border border-neutral-200/60 rounded-3xl shadow-2xl grid grid-cols-3 gap-1">
+                          <p className="col-span-3 text-[10px] uppercase tracking-widest text-neutral-400 font-bold px-3 mb-2">
+                            Explore All {link.name}
+                          </p>
+
+                          {link.items?.map((item) => (
+                            <Link
+                              key={item.name}
+                              href={item.href}
+                              className="flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-2xl hover:bg-blue-50 transition-all text-neutral-600 hover:text-blue-600 group/item"
+                            >
+                              <div className="p-2 rounded-xl bg-neutral-50 group-hover/item:bg-white transition-colors">
+                                <item.icon
+                                  size={16}
+                                  className="text-neutral-500 group-hover/item:text-blue-600"
+                                />
+                              </div>
+
+                              <span>{item.name}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Normal Links
                 const isActive = pathname === link.href;
                 return (
                   <Link
                     key={link.name}
-                    href={link.href}
+                    href={link.href as string}
                     className={`relative px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full flex items-center gap-1.5
                       ${isActive ? "bg-white text-blue-600 shadow-sm" : "text-neutral-600 hover:text-neutral-900 hover:bg-white/60"}`}
                   >
@@ -157,47 +281,10 @@ export default function Navbar() {
                   </Link>
                 );
               })}
-
-              {/* Enhanced Grid Dropdown for All Categories */}
-              <div className="relative group">
-                <button className="px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full flex items-center gap-1.5 text-neutral-600 hover:text-neutral-900 hover:bg-white/60 cursor-pointer">
-                  <LayoutGrid size={16} className="opacity-70" />
-                  More
-                  <ChevronDown
-                    size={14}
-                    className="group-hover:rotate-180 transition-transform duration-300"
-                  />
-                </button>
-
-                {/* Mega Dropdown style (Grid Layout) */}
-                <div className="absolute top-full right-0 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                  <div className="w-[450px] p-4 bg-white border border-neutral-200/60 rounded-3xl shadow-2xl grid grid-cols-2 gap-1">
-                    <p className="col-span-2 text-[10px] uppercase tracking-widest text-neutral-400 font-bold px-3 mb-2">
-                      Explore All Categories
-                    </p>
-                    {moreCategories.map((cat) => (
-                      <Link
-                        key={cat.name}
-                        href={cat.href}
-                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl hover:bg-blue-50 transition-all text-neutral-600 hover:text-blue-600 group/item"
-                      >
-                        <div className="p-1.5 rounded-lg bg-neutral-50 group-hover/item:bg-white transition-colors">
-                          <cat.icon
-                            size={16}
-                            className="text-neutral-500 group-hover/item:text-blue-600"
-                          />
-                        </div>
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center space-x-2 md:space-x-3">
-              {/* Search Button in Nav */}
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2.5 bg-neutral-100 rounded-full text-neutral-600 hover:text-blue-600 transition-all cursor-pointer"
@@ -211,11 +298,8 @@ export default function Navbar() {
                     onClick={() => setIsSearchOpen(false)}
                     className="absolute inset-0"
                   />
-                  {/* Wrapper to shift modal right */}
                   <div className="relative w-full max-w-3xl sm:translate-x-10 lg:translate-x-50">
-                    {/* Modal */}
                     <div className="relative w-full overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.12)] animate-in fade-in zoom-in-95 duration-200">
-                      {/* Header */}
                       <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
                           <Search size={16} />
@@ -240,23 +324,18 @@ export default function Navbar() {
                         </button>
                       </div>
 
-                      {/* Content */}
                       <div
                         className="max-h-[60vh] overflow-y-auto px-5 py-4 custom-scrollbar"
-                        style={{
-                          WebkitOverflowScrolling: "touch",
-                        }}
+                        style={{ WebkitOverflowScrolling: "touch" }}
                       >
                         {!searchQuery ? (
                           <div className="flex flex-col items-center justify-center py-14 text-center">
                             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm">
                               <Sparkles size={22} />
                             </div>
-
                             <h3 className="text-sm font-semibold text-slate-800">
                               Discover AI Tools
                             </h3>
-
                             <p className="mt-1 max-w-xs text-xs leading-relaxed text-slate-400">
                               Search tools, categories, productivity apps,
                               design platforms, coding assistants and more.
@@ -264,7 +343,6 @@ export default function Navbar() {
                           </div>
                         ) : (
                           <div className="space-y-5">
-                            {/* Categories */}
                             {results.categories.length > 0 && (
                               <section>
                                 <div className="mb-3 flex items-center justify-between px-1">
@@ -275,7 +353,6 @@ export default function Navbar() {
                                     {results.categories.length} found
                                   </span>
                                 </div>
-
                                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                                   {results.categories.map((cat: any) => (
                                     <Link
@@ -287,7 +364,6 @@ export default function Navbar() {
                                       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-500 border border-slate-100">
                                         <LayoutGrid size={15} />
                                       </div>
-
                                       <div className="min-w-0">
                                         <p className="truncate text-[13px] font-semibold text-slate-700">
                                           {cat.name}
@@ -299,7 +375,6 @@ export default function Navbar() {
                               </section>
                             )}
 
-                            {/* Tools */}
                             {results.tools.length > 0 && (
                               <section>
                                 <div className="mb-3 flex items-center justify-between px-1">
@@ -310,7 +385,6 @@ export default function Navbar() {
                                     {results.tools.length} found
                                   </span>
                                 </div>
-
                                 <div className="space-y-1">
                                   {results.tools.map((tool: any) => (
                                     <Link
@@ -336,7 +410,6 @@ export default function Navbar() {
                                             </div>
                                           )}
                                         </div>
-
                                         <div className="min-w-0">
                                           <h4 className="truncate text-sm font-semibold text-slate-800">
                                             {tool.name}
@@ -346,7 +419,6 @@ export default function Navbar() {
                                           </p>
                                         </div>
                                       </div>
-
                                       <ArrowRight
                                         size={15}
                                         className="shrink-0 text-slate-300 transition-transform duration-150 group-hover:translate-x-1 group-hover:text-slate-500"
@@ -357,7 +429,6 @@ export default function Navbar() {
                               </section>
                             )}
 
-                            {/* Empty State */}
                             {searchQuery &&
                               results.categories.length === 0 &&
                               results.tools.length === 0 && (
@@ -365,11 +436,9 @@ export default function Navbar() {
                                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
                                     <Search size={18} />
                                   </div>
-
                                   <h3 className="text-sm font-semibold text-slate-700">
                                     No results found
                                   </h3>
-
                                   <p className="mt-1 text-xs text-slate-400">
                                     Try searching for another tool or category.
                                   </p>
@@ -379,12 +448,10 @@ export default function Navbar() {
                         )}
                       </div>
 
-                      {/* Footer */}
                       <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-5 py-3">
                         <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                           ToolsVerse Directory
                         </span>
-
                         <div className="flex items-center gap-2">
                           <span className="h-2 w-2 rounded-full bg-green-500" />
                           <span className="text-[10px] font-medium text-slate-500">
@@ -420,6 +487,7 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+
         {/* --- MOBILE NAV (Scrollable & Future-Proof) --- */}
         <div
           className={`lg:hidden absolute inset-x-0 top-full mt-2 z-50 transition-all duration-300 ease-out ${
@@ -429,61 +497,68 @@ export default function Navbar() {
           }`}
         >
           <div className="bg-white border border-neutral-200/70 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col max-h-[85vh]">
-            {/* 1. Main Links Section (Static/Non-scrollable) */}
             <div className="p-3 pb-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 rounded-2xl transition-all group"
-                >
-                  <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                    <link.icon size={16} strokeWidth={2.5} />
-                  </div>
-                  <span className="text-[14px] font-bold text-neutral-800">
-                    {link.name}
-                  </span>
-                  <ArrowRight
-                    size={12}
-                    className="ml-auto text-neutral-300 group-hover:text-blue-500 transition-all"
-                  />
-                </Link>
-              ))}
+              {navLinks
+                .filter((link) => !link.isDropdown)
+                .map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href as string}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 rounded-2xl transition-all group"
+                  >
+                    <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                      <link.icon size={16} strokeWidth={2.5} />
+                    </div>
+                    <span className="text-[14px] font-bold text-neutral-800">
+                      {link.name}
+                    </span>
+                    <ArrowRight
+                      size={12}
+                      className="ml-auto text-neutral-300 group-hover:text-blue-500 transition-all"
+                    />
+                  </Link>
+                ))}
             </div>
 
-            {/* 2. Categories Section (Internal Scroll Area) */}
-            <div className="px-4 py-4 bg-neutral-50/50 border-t border-neutral-100">
-              <div className="flex items-center gap-3 mb-3 px-1">
-                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
-                  Explore Categories
-                </p>
-                <div className="h-[1px] flex-1 bg-neutral-200/60"></div>
-              </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar border-t border-neutral-100">
+              {navLinks
+                .filter((link) => link.isDropdown)
+                .map((dropdownSection) => (
+                  <div
+                    key={dropdownSection.name}
+                    className="px-4 py-3 bg-neutral-50/50 border-b border-neutral-100 last:border-b-0"
+                  >
+                    <div className="flex items-center gap-3 mb-2 px-1">
+                      <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                        {dropdownSection.name}
+                      </p>
+                      <div className="h-[1px] flex-1 bg-neutral-200/60"></div>
+                    </div>
 
-              {/* Scrollable Container with Fixed Height */}
-              <div className="max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
-                <div className="grid grid-cols-2 gap-2">
-                  {moreCategories.map((cat) => (
-                    <Link
-                      key={cat.name}
-                      href={cat.href}
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-neutral-200/60 hover:border-blue-300 transition-all active:scale-95 shadow-sm"
-                    >
-                      <div className="p-1.5 rounded-lg bg-blue-50">
-                        <cat.icon size={12} className="text-blue-600" />
+                    <div className="max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
+                      <div className="grid grid-cols-2 gap-2">
+                        {dropdownSection.items?.map((item) => (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-neutral-200/60 hover:border-blue-300 transition-all active:scale-95 shadow-sm"
+                          >
+                            <div className="p-1.5 rounded-lg bg-blue-50">
+                              <item.icon size={12} className="text-blue-600" />
+                            </div>
+                            <span className="text-[12px] font-semibold text-neutral-700 truncate">
+                              {item.name}
+                            </span>
+                          </Link>
+                        ))}
                       </div>
-                      <span className="text-[12px] font-semibold text-neutral-700 truncate">
-                        {cat.name}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+                    </div>
+                  </div>
+                ))}
             </div>
 
-            {/* 3. Sticky Action Footer */}
             <div className="p-4 bg-white border-t border-neutral-100 mt-auto">
               <div className="flex gap-2">
                 <Link
