@@ -54,7 +54,8 @@ const aiTools = [
     pricing: "Freemium",
     pricingDetails: { monthlyPrice: 20, yearlyPrice: 200, currency: "USD" },
     websiteUrl: "https://perplexity.ai",
-    imageUrl: "https://perplexity.ai/favicon.ico",
+    imageUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJimqQnRuBIYJ9hKQ7ukrgF6Goa-_8FPH5Ng&s",
     logo: "https://perplexity.ai/logo.png",
     rating: 4.9,
     totalReviews: 2100,
@@ -171,7 +172,7 @@ const aiTools = [
     affiliateUrl: "",
 
     imageUrl:
-      "https://github.githubassets.com/assets/copilot-logo-04ef9373.png",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTx_vYilTxt0bKgL-hCmIjDvB7yxabY4gRX1g&s",
     screenshots: [],
     logo: "https://github.com/favicon.ico",
     videoUrl: "",
@@ -255,7 +256,7 @@ const aiTools = [
     websiteUrl: "https://gemini.google.com",
     affiliateUrl: "",
 
-    imageUrl: "https://www.gstatic.com/lamda/images/gemini_sparkle_v002.svg",
+    imageUrl: "https://static.vecteezy.com/system/resources/thumbnails/066/382/087/small_2x/gemini-artificial-intelligence-colorful-logo-deep-learning-isolated-illustration-free-vector.jpg",
     screenshots: [],
     logo: "https://www.gstatic.com/lamda/images/favicon_v2_16x16.png",
     videoUrl: "",
@@ -3971,23 +3972,53 @@ const seedDatabase = async () => {
     await mongoose.connect(MONGODB_URI);
     console.log("Connected!");
 
-    // --- UPDATE THIS SECTION IN YOUR SCRIPT ---
+    // --- FULLY UPDATED SCHEMA (Sari fields ke saath) ---
     const toolSchema = new mongoose.Schema(
       {
-        name: String,
-        slug: String,
-        category: String,
-        pricing: String,
-        websiteUrl: String,
-        rating: Number,
+        name: { type: String, required: true },
+        slug: { type: String, required: true, unique: true }, // Unique slug zaroori hai
+        shortDescription: String,
         description: String,
-        imageUrl: String, // <--- YEH LINE ADD KAREIN (ZAROORI HAI)
+        category: String,
+        subCategory: String,
+        pricing: String,
+        // Nested Object for Pricing
+        pricingDetails: {
+          monthlyPrice: Number,
+          yearlyPrice: Number,
+          currency: String,
+        },
+        websiteUrl: String,
+        imageUrl: String,
+        logo: String,
+        rating: Number,
+        totalReviews: Number,
+        // Arrays
         features: [String],
         pros: [String],
         cons: [String],
+        tags: [String],
+        searchableKeywords: [String],
+        searchAliases: [String],
+        useCases: [String],
+        industries: [String],
+        integrations: [String],
+        languages: [String],
+        supportedCountries: [String],
+        platforms: [String],
+        // Additional Info
+        aiType: String,
+        toolPurpose: String,
+        difficultyLevel: String,
+        freeTrialAvailable: { type: Boolean, default: false },
+        // Analytics (Default values ke saath)
+        views: { type: Number, default: 0 },
+        clickCount: { type: Number, default: 0 },
+        shareCount: { type: Number, default: 0 },
+        bookmarkCount: { type: Number, default: 0 },
       },
       { timestamps: true },
-    ); // Timestamps bhi add kar dein taaki createdAt mil sake
+    );
 
     const Tool = mongoose.models.Tool || mongoose.model("Tool", toolSchema);
 
