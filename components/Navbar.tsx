@@ -468,13 +468,18 @@ export default function Navbar() {
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-600 rounded-full border-2 border-white scale-0 group-hover:scale-100 transition-transform" />
               </button>
 
-              <button className="hidden sm:flex items-center gap-2 p-1 pr-3 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all border border-neutral-200/50 cursor-pointer">
-                <div className="bg-white p-1.5 rounded-full shadow-sm">
-                  <UserCircle2 size={18} className="text-neutral-600" />
-                </div>
-                <span className="text-sm font-bold text-neutral-700">
-                  Login
-                </span>
+              <button>
+                <Link
+                  href="/login"
+                  className="hidden sm:flex items-center gap-2 p-1 pr-3 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all border border-neutral-200/50 cursor-pointer"
+                >
+                  <div className="bg-white p-1.5 rounded-full shadow-sm">
+                    <UserCircle2 size={18} className="text-neutral-600" />
+                  </div>
+                  <span className="text-sm font-bold text-neutral-700">
+                    Login
+                  </span>
+                </Link>
               </button>
 
               <button
@@ -566,9 +571,13 @@ export default function Navbar() {
                 >
                   <Bookmark size={14} /> Saved
                 </Link>
-                <button className="flex-[1.5] flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-lg shadow-blue-100 active:scale-95 transition-all">
-                  <UserCircle2 size={14} /> Login
-                </button>
+                <Link
+                  href="/login"
+                  className="flex-[1.5] flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-lg shadow-blue-100 active:scale-95 transition-all"
+                >
+                  <UserCircle2 size={14} />
+                  <span>Login</span>
+                </Link>
               </div>
             </div>
           </div>
