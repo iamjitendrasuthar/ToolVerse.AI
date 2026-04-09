@@ -191,7 +191,7 @@ export default function Navbar() {
         .slice(0, 4),
     };
   }, [searchQuery, dbData]);
-
+  const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
   return (
     <div className="fixed top-4 inset-x-0 z-50 flex justify-center w-full px-6 pointer-events-none">
       <nav
@@ -496,95 +496,159 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* --- MOBILE NAV (Scrollable & Future-Proof) --- */}
+        {/* --- MOBILE NAV (The Full ToolsVerse AI Experience) --- */}
         <div
-          className={`lg:hidden absolute inset-x-0 top-full mt-2 z-50 transition-all duration-300 ease-out ${
+          className={`lg:hidden absolute inset-x-0 top-full mt-4 z-50 transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) ${
             isOpen
               ? "opacity-100 translate-y-0 visible"
-              : "opacity-0 -translate-y-2 invisible pointer-events-none"
+              : "opacity-0 -translate-y-8 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white border border-neutral-200/70 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col max-h-[85vh]">
-            <div className="p-3 pb-1">
-              {navLinks
-                .filter((link) => !link.isDropdown)
-                .map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href as string}
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 rounded-2xl transition-all group"
-                  >
-                    <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                      <link.icon size={16} strokeWidth={2.5} />
-                    </div>
-                    <span className="text-[14px] font-bold text-neutral-800">
-                      {link.name}
-                    </span>
-                    <ArrowRight
-                      size={12}
-                      className="ml-auto text-neutral-300 group-hover:text-blue-500 transition-all"
-                    />
-                  </Link>
-                ))}
-            </div>
-
-            <div className="flex-1 overflow-y-auto custom-scrollbar border-t border-neutral-100">
-              {navLinks
-                .filter((link) => link.isDropdown)
-                .map((dropdownSection) => (
-                  <div
-                    key={dropdownSection.name}
-                    className="px-4 py-3 bg-neutral-50/50 border-b border-neutral-100 last:border-b-0"
-                  >
-                    <div className="flex items-center gap-3 mb-2 px-1">
-                      <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
-                        {dropdownSection.name}
-                      </p>
-                      <div className="h-[1px] flex-1 bg-neutral-200/60"></div>
-                    </div>
-
-                    <div className="max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
-                      <div className="grid grid-cols-2 gap-2">
-                        {dropdownSection.items?.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-neutral-200/60 hover:border-blue-300 transition-all active:scale-95 shadow-sm"
-                          >
-                            <div className="p-1.5 rounded-lg bg-blue-50">
-                              <item.icon size={12} className="text-blue-600" />
-                            </div>
-                            <span className="text-[12px] font-semibold text-neutral-700 truncate">
-                              {item.name}
-                            </span>
-                          </Link>
-                        ))}
+          <div className="bg-white/95 backdrop-blur-3xl border border-white/50 rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col max-h-[82vh]">
+            {/* 2. Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+              {/* SECTION A: Static Main Links (Full-Width Flat Design) */}
+              <div className="flex flex-col gap-2 px-1">
+                {navLinks
+                  .filter((link) => !link.isDropdown)
+                  .map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.href as string}
+                      onClick={() => setIsOpen(false)}
+                      className="group relative flex items-center gap-4 p-4 bg-neutral-50/50 border border-neutral-100 rounded-[1.5rem] transition-all duration-300 active:scale-[0.98] hover:bg-white hover:border-blue-500/30"
+                    >
+                      {/* Left Side: Clean Icon Square */}
+                      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white border border-neutral-100 text-neutral-500 group-hover:text-blue-600 group-hover:border-blue-100 transition-all duration-300">
+                        <link.icon size={22} strokeWidth={2} />
                       </div>
-                    </div>
-                  </div>
-                ))}
+
+                      {/* Center: Title & Subtext */}
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[15px] font-bold text-neutral-800 group-hover:text-blue-600 transition-colors tracking-tight">
+                          {link.name}
+                        </span>
+                        <span className="text-[11px] font-medium text-neutral-400">
+                          Discover {link.name.toLowerCase()}
+                        </span>
+                      </div>
+
+                      {/* Right Side: Minimal Arrow */}
+                      <div className="ml-auto w-8 h-8 flex items-center justify-center rounded-full text-neutral-300 group-hover:text-blue-600 group-hover:bg-blue-50 transition-all">
+                        <ArrowRight size={18} />
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+
+              {/* SECTION B: Deep Dive Accordions (Categories & Use Cases) */}
+              <div className="space-y-3 pt-2">
+                <span className="px-4 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Discover More
+                </span>
+
+                {navLinks
+                  .filter((link) => link.isDropdown)
+                  .map((dropdownSection) => {
+                    const isExpanded = activeAccordion === dropdownSection.name;
+
+                    return (
+                      <div
+                        key={dropdownSection.name}
+                        className={`rounded-[2.2rem] border transition-all duration-500 ${
+                          isExpanded
+                            ? "bg-white border-blue-100 shadow-xl shadow-blue-500/5 ring-4 ring-blue-50/50"
+                            : "bg-neutral-50/50 border-transparent"
+                        }`}
+                      >
+                        {/* Header Toggle */}
+                        <button
+                          onClick={() =>
+                            setActiveAccordion(
+                              isExpanded ? null : dropdownSection.name,
+                            )
+                          }
+                          className="w-full flex items-center justify-between p-5"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-500 ${isExpanded ? "bg-blue-600 text-white" : "bg-white text-neutral-400 shadow-sm"}`}
+                            >
+                              <dropdownSection.icon size={18} />
+                            </div>
+                            <span
+                              className={`text-[15px] font-extrabold tracking-tight transition-colors ${isExpanded ? "text-neutral-900" : "text-neutral-500"}`}
+                            >
+                              {dropdownSection.name}
+                            </span>
+                          </div>
+                          <div
+                            className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-500 ${isExpanded ? "bg-blue-50 rotate-180" : "bg-white shadow-sm"}`}
+                          >
+                            <ChevronDown
+                              size={14}
+                              className={
+                                isExpanded
+                                  ? "text-blue-600"
+                                  : "text-neutral-300"
+                              }
+                            />
+                          </div>
+                        </button>
+
+                        {/* Grid Content */}
+                        <div
+                          className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16, 1, 0.3, 1)] ${
+                            isExpanded
+                              ? "max-h-[800px] opacity-100 pb-6 px-4"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            {dropdownSection.items?.map((item) => (
+                              <Link
+                                key={item.name}
+                                href={item.href}
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center gap-2.5 p-3 rounded-2xl bg-neutral-50/80 hover:bg-white border border-transparent hover:border-neutral-200 transition-all group/item"
+                              >
+                                <div className="p-1.5 rounded-lg bg-white shadow-sm group-hover/item:text-blue-600">
+                                  <item.icon size={12} />
+                                </div>
+                                <span className="text-[11px] font-bold text-neutral-600 group-hover/item:text-blue-600 truncate">
+                                  {item.name}
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
             </div>
 
-            <div className="p-4 bg-white border-t border-neutral-100 mt-auto">
-              <div className="flex gap-2">
-                <Link
-                  href="/bookmarks"
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-neutral-100 text-neutral-800 font-bold text-[13px] active:scale-95 transition-all"
-                >
-                  <Bookmark size={14} /> Saved
-                </Link>
-                <Link
-                  href="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="flex-[1.5] flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-bold text-[13px] shadow-lg shadow-blue-100 active:scale-95 transition-all"
-                >
-                  <UserCircle2 size={14} />
-                  <span>Login</span>
-                </Link>
-              </div>
+            {/* 3. Action Footer - Equal Width Buttons */}
+            <div className="p-6 bg-white border-t border-neutral-100 flex items-center gap-3">
+              {/* Login Button */}
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="flex-1 py-4 rounded-[1.5rem] bg-neutral-900 text-white font-bold text-[14px] text-center shadow-lg shadow-neutral-900/10 active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <UserCircle2 size={18} />
+                Login
+              </Link>
+
+              {/* Saved Button */}
+              <Link
+                href="/bookmarks"
+                onClick={() => setIsOpen(false)}
+                className="flex-1 py-4 rounded-[1.5rem] bg-neutral-100 text-neutral-600 font-bold text-[14px] text-center active:scale-95 transition-all flex items-center justify-center gap-2 border border-neutral-200/50"
+              >
+                <Bookmark size={18} />
+                Saved
+              </Link>
             </div>
           </div>
         </div>
