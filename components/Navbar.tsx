@@ -226,14 +226,30 @@ export default function Navbar() {
               {navLinks.map((link) => {
                 // Dropdowns
                 if (link.isDropdown) {
+                  const isDropdownActive = link.items?.some(
+                    (item) => pathname === item.href,
+                  );
                   return (
                     <div key={link.name} className="relative group">
-                      <button className="px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full flex items-center gap-1.5 text-neutral-600 hover:text-neutral-900 hover:bg-white/60 cursor-pointer">
-                        <link.icon size={16} className="opacity-70" />
+                      <button
+                        className={`px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full flex items-center gap-1.5 cursor-pointer
+            ${
+              isDropdownActive
+                ? "bg-white text-blue-600 shadow-sm" // Active state jab sub-link open ho
+                : "text-neutral-600 hover:text-neutral-900 hover:bg-white/60"
+            }`}
+                      >
+                        <link.icon
+                          size={16}
+                          className={
+                            isDropdownActive ? "text-blue-600" : "opacity-70"
+                          }
+                        />
                         {link.name}
                         <ChevronDown
                           size={14}
-                          className="group-hover:rotate-180 transition-transform duration-300"
+                          className={`transition-transform duration-300 group-hover:rotate-180 
+              ${isDropdownActive ? "text-blue-600" : "text-neutral-400"}`}
                         />
                       </button>
 
@@ -244,22 +260,44 @@ export default function Navbar() {
                             Explore All {link.name}
                           </p>
 
-                          {link.items?.map((item) => (
-                            <Link
-                              key={item.name}
-                              href={item.href}
-                              className="flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-2xl hover:bg-blue-50 transition-all text-neutral-600 hover:text-blue-600 group/item"
-                            >
-                              <div className="p-2 rounded-xl bg-neutral-50 group-hover/item:bg-white transition-colors">
-                                <item.icon
-                                  size={16}
-                                  className="text-neutral-500 group-hover/item:text-blue-600"
-                                />
-                              </div>
+                          {link.items?.map((item) => {
+                            // 1. Active state check karein
+                            const isSubActive = pathname === item.href;
 
-                              <span>{item.name}</span>
-                            </Link>
-                          ))}
+                            return (
+                              <Link
+                                key={item.name}
+                                href={item.href}
+                                className={`flex items-center gap-3 px-3 py-3 text-sm font-semibold rounded-2xl transition-all group/item
+            ${
+              isSubActive
+                ? "bg-blue-50 text-blue-600" // Active State: Light blue background and blue text
+                : "text-neutral-600 hover:text-blue-600 hover:bg-blue-50/50" // Normal State
+            }`}
+                              >
+                                <div
+                                  className={`p-2 rounded-xl transition-colors
+            ${
+              isSubActive
+                ? "bg-white shadow-sm" // Active State Icon container
+                : "bg-neutral-50 group-hover/item:bg-white"
+            }`}
+                                >
+                                  <item.icon
+                                    size={16}
+                                    className={`${isSubActive ? "text-blue-600" : "text-neutral-500 group-hover/item:text-blue-600"}`}
+                                  />
+                                </div>
+
+                                <span>{item.name}</span>
+
+                                {/* Optional: Chota sa active dot agar aapko aur premium dikhana ho */}
+                                {isSubActive && (
+                                  <div className="ml-auto w-1 h-1 bg-blue-600 rounded-full" />
+                                )}
+                              </Link>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
