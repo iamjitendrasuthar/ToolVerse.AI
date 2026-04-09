@@ -12,7 +12,7 @@ export default function LayoutWrapper({
   const pathname = usePathname();
 
   // Check if current path is login
-  const isLoginPage = pathname === "/login" || pathname === "/forgot-password";
+  const isLoginPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   return (
     <>

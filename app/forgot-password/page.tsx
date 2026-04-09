@@ -9,32 +9,63 @@ import {
   ArrowLeft,
   CheckCircle2,
   ArrowRight,
+  Loader2,
 } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Yaha aap apni API call karenge password reset link bhejne ke liye
-    if (email) {
+
+    if (!email) return;
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await fetch("/api/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const text = await res.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { message: text };
+      }
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
       setIsSubmitted(true);
+    } catch (err: any) {
+      setError(err.message || "Failed to send reset link");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center bg-[#fafcff] selection:bg-blue-200 selection:text-blue-900 font-sans p-4 relative overflow-hidden">
-      {/* --- AMBIENT BACKGROUND GLOWS --- */}
       <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-400/10 blur-[100px]" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-indigo-400/10 blur-[100px]" />
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-40 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]" />
       </div>
 
-      {/* --- CENTERED CARD --- */}
       <div className="w-full max-w-[440px] bg-white rounded-[2rem] shadow-2xl shadow-blue-900/5 border border-slate-200/60 p-8 sm:p-10 relative z-10 overflow-hidden">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link
             href="/"
@@ -51,7 +82,6 @@ export default function ForgotPasswordPage() {
 
         <AnimatePresence mode="wait">
           {!isSubmitted ? (
-            /* --- STEP 1: REQUEST FORM --- */
             <motion.div
               key="form"
               initial={{ opacity: 0, x: 20 }}
@@ -74,11 +104,13 @@ export default function ForgotPasswordPage() {
                   <label className="text-xs font-bold text-slate-700 ml-1">
                     Email Address
                   </label>
+
                   <div className="relative group">
                     <Mail
                       size={18}
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"
                     />
+
                     <input
                       type="email"
                       value={email}
@@ -90,15 +122,31 @@ export default function ForgotPasswordPage() {
                   </div>
                 </div>
 
+                {error && (
+                  <div className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                    {error}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-3.5 mt-6 bg-slate-950 hover:bg-blue-600 text-white rounded-xl font-bold text-[15px] transition-all shadow-md hover:shadow-blue-500/25 hover:-translate-y-0.5 cursor-pointer group"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 mt-6 bg-slate-950 hover:bg-blue-600 disabled:opacity-70 disabled:cursor-not-allowed text-white rounded-xl font-bold text-[15px] transition-all shadow-md hover:shadow-blue-500/25 hover:-translate-y-0.5 cursor-pointer group"
                 >
-                  Send reset link
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
+                  {loading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send reset link
+                      <ArrowRight
+                        size={18}
+                        className="group-hover:translate-x-1 transition-transform"
+                      />
+                    </>
+                  )}
                 </button>
               </form>
 
@@ -116,7 +164,6 @@ export default function ForgotPasswordPage() {
               </div>
             </motion.div>
           ) : (
-            /* --- STEP 2: SUCCESS MESSAGE --- */
             <motion.div
               key="success"
               initial={{ opacity: 0, x: 20 }}
@@ -134,9 +181,9 @@ export default function ForgotPasswordPage() {
 
               <p className="text-slate-500 font-medium text-sm mb-8 leading-relaxed">
                 We've sent a password reset link to <br />
-                <span className="font-bold text-slate-900">{email}</span>.{" "}
+                <span className="font-bold text-slate-900">{email}</span>
                 <br />
-                Please check your inbox.
+                Please check your inbox and spam folder.
               </p>
 
               <div className="space-y-4">
@@ -150,7 +197,10 @@ export default function ForgotPasswordPage() {
                 <div className="text-sm font-medium text-slate-500">
                   Didn't receive the email?{" "}
                   <button
-                    onClick={() => setIsSubmitted(false)}
+                    onClick={() => {
+                      setIsSubmitted(false);
+                      setError("");
+                    }}
                     className="font-bold text-slate-950 hover:text-blue-600 transition-colors cursor-pointer underline decoration-slate-300 underline-offset-4 hover:decoration-blue-600"
                   >
                     Click to resend
