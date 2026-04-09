@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   Sparkles,
   Mail,
@@ -51,9 +52,14 @@ export default function AuthPage() {
 
         if (res?.error) {
           setError("Invalid email or password. Please try again.");
+          toast.error("Authentication failed!");
         } else {
-          router.push("/");
-          router.refresh();
+          toast.success("Login successful.");
+
+          setTimeout(() => {
+            router.push("/");
+            router.refresh();
+          }, 1000);
         }
       } else {
         const res = await fetch("/api/register", {
@@ -65,15 +71,20 @@ export default function AuthPage() {
         const data = await res.json();
 
         if (res.ok) {
+          toast.success("Account created!", {
+            description: "You can now sign in with your credentials.",
+          });
           setIsLogin(true);
           setFormData({ ...formData, password: "" });
           alert("Account created successfully! Please sign in.");
         } else {
           setError(data.message || "Something went wrong during registration.");
+          toast.error(data.message || "Registration failed");
         }
       }
     } catch (err) {
       setError("A network error occurred. Please check your connection.");
+      toast.error("Network error occurred.");
     } finally {
       setIsLoading(false);
     }

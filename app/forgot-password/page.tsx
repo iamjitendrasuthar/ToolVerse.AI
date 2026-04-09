@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   ArrowRight,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 export default function ForgotPasswordPage() {
@@ -36,7 +37,6 @@ export default function ForgotPasswordPage() {
       });
 
       const text = await res.text();
-
       let data;
 
       try {
@@ -59,6 +59,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center bg-[#fafcff] selection:bg-blue-200 selection:text-blue-900 font-sans p-4 relative overflow-hidden">
+      {/* Background Decorative Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-400/10 blur-[100px]" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-indigo-400/10 blur-[100px]" />
@@ -66,6 +67,7 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="w-full max-w-[440px] bg-white rounded-[2rem] shadow-2xl shadow-blue-900/5 border border-slate-200/60 p-8 sm:p-10 relative z-10 overflow-hidden">
+        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link
             href="/"
@@ -94,14 +96,14 @@ export default function ForgotPasswordPage() {
                   Reset password
                 </h2>
                 <p className="text-slate-500 font-medium text-sm px-2">
-                  Enter your email address and we'll send you a link to reset
-                  your password.
+                  Enter your email address and we&apos;ll send you a link to
+                  reset your password.
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 ml-1">
+                  <label className="text-xs font-bold text-slate-700 ml-1 uppercase tracking-wider">
                     Email Address
                   </label>
 
@@ -116,14 +118,15 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@company.com"
-                      className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
+                      className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-900 text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
                       required
                     />
                   </div>
                 </div>
 
                 {error && (
-                  <div className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                  <div className="text-xs font-bold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3 flex items-center gap-2">
+                    <AlertCircle size={16} />
                     {error}
                   </div>
                 )}
@@ -180,7 +183,7 @@ export default function ForgotPasswordPage() {
               </h2>
 
               <p className="text-slate-500 font-medium text-sm mb-8 leading-relaxed">
-                We've sent a password reset link to <br />
+                We&apos;ve sent a password reset link to <br />
                 <span className="font-bold text-slate-900">{email}</span>
                 <br />
                 Please check your inbox and spam folder.
@@ -195,7 +198,7 @@ export default function ForgotPasswordPage() {
                 </button>
 
                 <div className="text-sm font-medium text-slate-500">
-                  Didn't receive the email?{" "}
+                  Didn&apos;t receive the email?{" "}
                   <button
                     onClick={() => {
                       setIsSubmitted(false);

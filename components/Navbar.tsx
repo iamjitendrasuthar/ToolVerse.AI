@@ -53,6 +53,7 @@ import {
   Edit3,
   LogOut,
 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,7 +63,8 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [dbData, setDbData] = useState({ tools: [], categories: [] });
   const { data: session, status } = useSession();
-  const loading = status === "loading";
+  const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -194,7 +196,17 @@ export default function Navbar() {
         .slice(0, 4),
     };
   }, [searchQuery, dbData]);
-  const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+  const handleLogout = async () => {
+    // Logout toast trigger karein
+    toast.success("Logged out successfully", {
+      description: "See you again soon!",
+    });
+
+    // Chhota sa delay taaki user toast dekh le, phir sign out karein
+    setTimeout(async () => {
+      await signOut({ callbackUrl: "/login" });
+    }, 1000);
+  };
   return (
     <div className="fixed top-4 inset-x-0 z-50 flex justify-center w-full px-6 pointer-events-none">
       <nav
@@ -582,7 +594,7 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
                         {/* Logout Footer */}
                         <div className="p-2 bg-neutral-50/30">
                           <button
-                            onClick={() => signOut()}
+                            onClick={handleLogout}
                             className="w-full flex items-center gap-3 px-4 py-3 rounded-[1.2rem] text-sm font-bold text-red-500 hover:bg-red-50 transition-all active:scale-[0.98]"
                           >
                             <div className="p-2 bg-red-100/50 rounded-xl">
