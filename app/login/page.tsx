@@ -403,7 +403,6 @@ export default function AuthPage() {
                 {isLogin && (
                   <Link
                     href="/forgot-password"
-                    size={16}
                     className="text-[11px] font-bold text-blue-600 hover:text-blue-700 transition-colors"
                   >
                     Forgot password?
