@@ -1,3 +1,4 @@
+import Provider from "@/components/Provider";
 import "./globals.css";
 import LayoutWrapper from "@/components/LayoutWrapper";
 
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-full flex flex-col bg-[#fafcff]">
-        <LayoutWrapper>{children}</LayoutWrapper>
+        <Provider>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </Provider>
       </body>
     </html>
   );

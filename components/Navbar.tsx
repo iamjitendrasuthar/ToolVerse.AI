@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   Menu,
   X,
@@ -50,6 +51,7 @@ import {
   Rocket,
   DollarSign,
   Edit3,
+  LogOut,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -59,7 +61,8 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [dbData, setDbData] = useState({ tools: [], categories: [] });
-
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -463,28 +466,111 @@ export default function Navbar() {
                 </div>
               )}
 
-              <Link
-                href="/bookmarks"
-                className="relative inline-flex items-center justify-center p-2.5 text-neutral-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all group cursor-pointer"
-              >
-                <Bookmark size={20} />
-                {/* Notification dot effect */}
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-600 rounded-full border-2 border-white scale-0 group-hover:scale-100 transition-transform" />
-              </Link>
-
-              <button>
-                <Link
-                  href="/login"
-                  className="hidden sm:flex items-center gap-2 p-1 pr-3 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all border border-neutral-200/50 cursor-pointer"
-                >
-                  <div className="bg-white p-1.5 rounded-full shadow-sm">
-                    <UserCircle2 size={18} className="text-neutral-600" />
+              <div className="hidden sm:block">
+                {status === "loading" ? (
+                  /* --- SKELETON TRIGGER (Desktop flicker fix) --- */
+                  <div className="flex items-center gap-2 p-1 pr-4 bg-white rounded-full border border-neutral-100 shadow-sm animate-pulse w-[130px] h-[42px]">
+                    <div className="w-8 h-8 bg-neutral-100 rounded-full"></div>
+                    <div className="h-3 w-16 bg-neutral-100 rounded-full"></div>
                   </div>
-                  <span className="text-sm font-bold text-neutral-700">
-                    Login
-                  </span>
-                </Link>
-              </button>
+                ) : session?.user ? (
+                  <div className="relative group/menu">
+                    {" "}
+                    {/* --- TRIGGER BUTTON --- */}
+                    <button className="hidden sm:flex items-center gap-2 p-1 pr-4 bg-white hover:bg-neutral-50 rounded-full transition-all border border-neutral-200/60 shadow-sm cursor-pointer active:scale-95">
+                      <div className="relative">
+                        <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-black shadow-inner">
+                          {session.user.name?.charAt(0).toUpperCase() || "U"}
+                        </div>
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></span>
+                      </div>
+                      <span className="hidden md:inline text-[13px] font-bold text-neutral-700 tracking-tight">
+                        My Space
+                      </span>
+                      <ChevronDown
+                        size={14}
+                        className="text-neutral-400 transition-transform duration-300 group-hover:rotate-180"
+                      />
+                    </button>
+                    {/* --- DROPDOWN MENU --- */}
+                    {status === "authenticated" && (
+                      <div
+                        className="group-hover/menu:opacity-100
+group-hover/menu:visible
+group-hover/menu:pointer-events-auto
+group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem] bg-white border border-neutral-200/70 shadow-2xl opacity-0 invisible translate-y-4 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50 overflow-hidden"
+                      >
+                        <div className="px-6 py-5 bg-neutral-50/50 border-b border-neutral-100">
+                          <p className="text-sm font-black text-neutral-800 truncate leading-none">
+                            {session.user.name}
+                          </p>
+                          <p className="text-[11px] font-medium text-neutral-400 truncate mt-1.5 uppercase tracking-wider">
+                            {session.user.email}
+                          </p>
+                        </div>
+
+                        {/* Action Links */}
+                        <div className="p-2">
+                          <Link
+                            href="/bookmarks"
+                            className="flex items-center justify-between w-full px-4 py-3 rounded-[1.2rem] text-neutral-600 hover:text-blue-600 hover:bg-blue-50/50 transition-all group/item"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-neutral-100 rounded-xl group-hover/item:bg-blue-100/50 transition-colors">
+                                <Bookmark size={18} />
+                              </div>
+                              <span className="text-sm font-bold">
+                                My Bookmarks
+                              </span>
+                            </div>
+                            <span className="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-600 text-[10px] font-black rounded-full scale-0 group-hover/item:scale-100 transition-transform">
+                              12
+                            </span>
+                          </Link>
+
+                          <Link
+                            href="/settings"
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[1.2rem] text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/50 transition-all"
+                          >
+                            <div className="p-2 bg-neutral-100 rounded-xl">
+                              <UserCircle2 size={18} />
+                            </div>
+                            <span className="text-sm font-bold">
+                              Profile Settings
+                            </span>
+                          </Link>
+                        </div>
+
+                        {/* Logout Footer */}
+                        <div className="p-2 bg-neutral-50/30">
+                          <button
+                            onClick={() => signOut()}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-[1.2rem] text-sm font-bold text-red-500 hover:bg-red-50 transition-all active:scale-[0.98]"
+                          >
+                            <div className="p-2 bg-red-100/50 rounded-xl">
+                              <LogOut size={16} />
+                            </div>
+                            Logout Session
+                          </button>
+                        </div>
+                      </div>
+                    )}{" "}
+                  </div>
+                ) : (
+                  /* --- LOGGED OUT VIEW --- */
+                  <Link
+                    href="/login"
+                    className="hidden sm:flex items-center gap-2 p-1 pr-3 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all border border-neutral-200/50 cursor-pointer"
+                  >
+                    <div className="bg-white p-1.5 rounded-full shadow-sm">
+                      <UserCircle2 size={18} className="text-neutral-600" />
+                    </div>
+                    <span className="text-sm font-bold text-neutral-700">
+                      Sign In
+                    </span>
+                  </Link>
+                )}
+              </div>
 
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -628,27 +714,79 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* 3. Action Footer - Equal Width Buttons */}
-            <div className="p-6 bg-white border-t border-neutral-100 flex items-center gap-3">
-              {/* Login Button */}
-              <Link
-                href="/login"
-                onClick={() => setIsOpen(false)}
-                className="flex-1 py-4 rounded-[1.5rem] bg-neutral-900 text-white font-bold text-[14px] text-center shadow-lg shadow-neutral-900/10 active:scale-95 transition-all flex items-center justify-center gap-2"
-              >
-                <UserCircle2 size={18} />
-                Login
-              </Link>
+            <div className="p-6 bg-white border-t border-neutral-100">
+              {/* --- STATUS CHECK: Jab tak loading hai, flicker nahi hoga --- */}
+              {status === "loading" ? (
+                <div className="flex items-center gap-3 animate-pulse">
+                  <div className="flex-1 h-12 bg-neutral-100 rounded-[1.5rem]"></div>
+                  <div className="flex-1 h-12 bg-neutral-100 rounded-[1.5rem]"></div>
+                </div>
+              ) : session?.user ? (
+                /* --- LOGGED IN VIEW --- */
+                <div className="flex flex-col gap-3">
+                  {/* User Info Brief */}
+                  <div className="flex items-center gap-3 px-2 mb-2">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-black shadow-sm">
+                      {session.user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-black text-neutral-800 truncate">
+                        {session.user.name}
+                      </p>
+                      <p className="text-[11px] text-neutral-400 truncate tracking-tight font-medium">
+                        {session.user.email}
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Saved Button */}
-              <Link
-                href="/bookmarks"
-                onClick={() => setIsOpen(false)}
-                className="flex-1 py-4 rounded-[1.5rem] bg-neutral-100 text-neutral-600 font-bold text-[14px] text-center active:scale-95 transition-all flex items-center justify-center gap-2 border border-neutral-200/50"
-              >
-                <Bookmark size={18} />
-                Saved
-              </Link>
+                  <div className="flex items-center gap-3">
+                    {/* Bookmarks Button */}
+                    <Link
+                      href="/bookmarks"
+                      onClick={() => setIsOpen(false)}
+                      className="flex-1 py-4 rounded-[1.5rem] bg-blue-50 text-blue-600 font-bold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition-all border border-blue-100 hover:bg-blue-100"
+                    >
+                      <Bookmark size={18} />
+                      Saved
+                    </Link>
+
+                    {/* Logout Button */}
+                    <button
+                      onClick={() => {
+                        setIsOpen(false);
+                        signOut();
+                      }}
+                      className="flex-1 py-4 rounded-[1.5rem] bg-red-50 text-red-500 font-bold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition-all border border-red-100 cursor-pointer hover:bg-red-100"
+                    >
+                      <LogOut size={18} />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* --- LOGGED OUT VIEW --- */
+                <div className="flex items-center gap-3">
+                  {/* Login Button */}
+                  <Link
+                    href="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1 py-4 rounded-[1.5rem] bg-neutral-900 text-white font-bold text-[14px] text-center shadow-lg shadow-neutral-900/10 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  >
+                    <UserCircle2 size={18} />
+                    Login
+                  </Link>
+
+                  {/* Saved/Bookmarks Button */}
+                  <Link
+                    href="/bookmarks"
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1 py-4 rounded-[1.5rem] bg-neutral-100 text-neutral-600 font-bold text-[14px] text-center active:scale-95 transition-all flex items-center justify-center gap-2 border border-neutral-200/50"
+                  >
+                    <Bookmark size={18} />
+                    Saved
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
