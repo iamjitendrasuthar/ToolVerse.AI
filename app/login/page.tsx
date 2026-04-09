@@ -13,6 +13,8 @@ import {
   ArrowRight,
   Loader2,
   AlertCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { SiGoogle, SiGithub } from "react-icons/si";
 
@@ -20,9 +22,9 @@ export default function AuthPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // New state for visibility
   const [error, setError] = useState("");
 
-  // Form State
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,7 +33,7 @@ export default function AuthPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (error) setError(""); // Clear error when user types
+    if (error) setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +43,6 @@ export default function AuthPage() {
 
     try {
       if (isLogin) {
-        // --- LOGIN LOGIC ---
         const res = await signIn("credentials", {
           email: formData.email,
           password: formData.password,
@@ -55,7 +56,6 @@ export default function AuthPage() {
           router.refresh();
         }
       } else {
-        // --- SIGNUP LOGIC ---
         const res = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -65,9 +65,8 @@ export default function AuthPage() {
         const data = await res.json();
 
         if (res.ok) {
-          // Success: Switch to login
           setIsLogin(true);
-          setFormData({ ...formData, password: "" }); // Clear password for safety
+          setFormData({ ...formData, password: "" });
           alert("Account created successfully! Please sign in.");
         } else {
           setError(data.message || "Something went wrong during registration.");
@@ -86,16 +85,13 @@ export default function AuthPage() {
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center bg-[#fafcff] selection:bg-blue-200 selection:text-blue-900 font-sans p-4 relative overflow-hidden">
-      {/* --- AMBIENT BACKGROUND GLOWS --- */}
       <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-400/10 blur-[100px]" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-indigo-400/10 blur-[100px]" />
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-40 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]" />
       </div>
 
-      {/* --- CENTERED AUTH CARD --- */}
       <div className="w-full max-w-[440px] bg-white rounded-[2rem] shadow-2xl shadow-blue-900/5 border border-slate-200/60 p-8 sm:p-10 relative z-10">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link
             href="/"
@@ -110,7 +106,6 @@ export default function AuthPage() {
           </Link>
         </div>
 
-        {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mb-2">
             {isLogin ? "Welcome back" : "Create an account"}
@@ -122,7 +117,6 @@ export default function AuthPage() {
           </p>
         </div>
 
-        {/* Error Message Display */}
         {error && (
           <div className="mb-6 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-xs font-bold animate-in fade-in zoom-in-95">
             <AlertCircle size={16} />
@@ -130,7 +124,6 @@ export default function AuthPage() {
           </div>
         )}
 
-        {/* Social Logins */}
         <div className="flex gap-3 mb-6">
           <button
             type="button"
@@ -145,12 +138,11 @@ export default function AuthPage() {
             onClick={() => handleSocialAuth("github")}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white border border-slate-200/80 hover:border-blue-200 hover:bg-blue-50/50 rounded-xl font-bold text-[13px] text-slate-700 transition-all shadow-sm hover:-translate-y-0.5 cursor-pointer"
           >
-            <SiGithub size={16} />
+            <SiGithub size={16} className="text-slate-900" />
             GitHub
           </button>
         </div>
 
-        {/* Divider */}
         <div className="relative flex items-center py-2 mb-6">
           <div className="flex-grow border-t border-slate-200"></div>
           <span className="flex-shrink-0 mx-4 text-slate-400 text-[10px] font-black uppercase tracking-widest">
@@ -159,7 +151,6 @@ export default function AuthPage() {
           <div className="flex-grow border-t border-slate-200"></div>
         </div>
 
-        {/* Dynamic Form */}
         <AnimatePresence mode="wait">
           <motion.form
             key={isLogin ? "login" : "signup"}
@@ -170,7 +161,6 @@ export default function AuthPage() {
             className="space-y-4"
             onSubmit={handleSubmit}
           >
-            {/* Name Field (Only for Signup) */}
             {!isLogin && (
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 ml-1">
@@ -187,14 +177,13 @@ export default function AuthPage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="John Doe"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
+                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-900 text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
                     required={!isLogin}
                   />
                 </div>
               </div>
             )}
 
-            {/* Email Field */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 ml-1">
                 Email Address
@@ -210,13 +199,12 @@ export default function AuthPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="name@company.com"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-900 text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
                   required
                 />
               </div>
             </div>
 
-            {/* Password Field */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between ml-1">
                 <label className="text-xs font-bold text-slate-700">
@@ -238,21 +226,28 @@ export default function AuthPage() {
                 />
                 <input
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
+                  className="w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-900 text-[14px] font-medium placeholder:text-slate-400 shadow-sm"
                   required
                 />
+                {/* Password Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 mt-6 bg-slate-950 hover:bg-blue-600 text-white rounded-xl font-bold text-[15px] transition-all shadow-md hover:shadow-blue-500/25 hover:-translate-y-0.5 cursor-pointer group disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:-translate-y-0"
+              className="w-full flex items-center justify-center gap-2 py-3.5 mt-6 bg-slate-950 hover:bg-blue-600 text-white rounded-xl font-bold text-[15px] transition-all shadow-md hover:shadow-blue-500/25 hover:-translate-y-0.5 cursor-pointer group disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <Loader2 size={20} className="animate-spin" />
@@ -269,14 +264,14 @@ export default function AuthPage() {
           </motion.form>
         </AnimatePresence>
 
-        {/* Toggle Login/Signup */}
         <div className="mt-8 text-center text-sm font-medium text-slate-500">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             type="button"
             onClick={() => {
               setIsLogin(!isLogin);
-              setError(""); // Clear error when switching
+              setError("");
+              setShowPassword(false); // Reset eye state on toggle
             }}
             className="font-bold text-slate-950 hover:text-blue-600 transition-colors cursor-pointer"
           >
