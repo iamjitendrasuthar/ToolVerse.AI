@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,7 +15,7 @@ import {
   EyeOff,
 } from "lucide-react";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Password Toggle State
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -44,6 +44,7 @@ export default function ResetPasswordPage() {
 
     try {
       setLoading(true);
+
       const res = await fetch("/api/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,10 +52,16 @@ export default function ResetPasswordPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Something went wrong");
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
 
       setSuccess(true);
-      setTimeout(() => router.push("/login"), 3000);
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     } catch (err: any) {
       setError(err.message || "Failed to reset password");
     } finally {
@@ -64,14 +71,12 @@ export default function ResetPasswordPage() {
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center bg-[#fafcff] selection:bg-blue-200 selection:text-blue-900 font-sans p-4 relative overflow-hidden">
-      {/* --- BACKGROUND GLOWS --- */}
       <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-400/10 blur-[100px]" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-indigo-400/10 blur-[100px]" />
       </div>
 
       <div className="w-full max-w-[440px] bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-slate-200/60 p-8 sm:p-10 relative z-10 overflow-hidden">
-        {/* Logo */}
         <div className="flex justify-center mb-10">
           <div className="flex items-center gap-2">
             <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20">
@@ -101,16 +106,17 @@ export default function ResetPasswordPage() {
               </div>
 
               <form onSubmit={handleResetPassword} className="space-y-5">
-                {/* New Password */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 ml-1 uppercase tracking-wider">
                     New Password
                   </label>
+
                   <div className="relative group">
                     <Lock
                       size={18}
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"
                     />
+
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
@@ -119,7 +125,7 @@ export default function ResetPasswordPage() {
                       className="w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-950 font-medium placeholder:text-slate-300"
                       required
                     />
-                    {/* Toggle Button */}
+
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -130,16 +136,17 @@ export default function ResetPasswordPage() {
                   </div>
                 </div>
 
-                {/* Confirm Password */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 ml-1 uppercase tracking-wider">
                     Confirm Password
                   </label>
+
                   <div className="relative group">
                     <ShieldCheck
                       size={18}
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"
                     />
+
                     <input
                       type={showPassword ? "text" : "password"}
                       value={confirmPassword}
@@ -166,8 +173,8 @@ export default function ResetPasswordPage() {
                   {loading ? (
                     <Loader2 size={20} className="animate-spin" />
                   ) : (
-                    <>
-                      Secure Account
+                     <>
+                      Update Password
                       <ArrowRight
                         size={18}
                         className="group-hover:translate-x-1 transition-transform"
@@ -187,24 +194,26 @@ export default function ResetPasswordPage() {
               <div className="w-20 h-20 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 size={40} className="text-emerald-500" />
               </div>
+
               <h2 className="text-2xl font-black text-slate-950 mb-2 tracking-tight">
                 Success!
               </h2>
+
               <p className="text-slate-500 font-medium text-sm mb-8">
                 Your password is updated. Taking you to login...
               </p>
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden max-w-[200px] mx-auto">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 3 }}
-                  className="h-full bg-emerald-500"
-                />
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
