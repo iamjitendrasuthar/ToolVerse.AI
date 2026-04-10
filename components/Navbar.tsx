@@ -54,8 +54,12 @@ import {
   LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
+import { fetchBookmarks } from "@/Store/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@/Store/hooks";
 
 export default function Navbar() {
+  const dispatch = useAppDispatch();
+
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -64,7 +68,11 @@ export default function Navbar() {
   const [dbData, setDbData] = useState({ tools: [], categories: [] });
   const { data: session, status } = useSession();
   const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
-
+  const { bookmarkIds } = useAppSelector((state) => state.user);
+  const totalBookmarks = bookmarkIds.length;
+  useEffect(() => {
+    dispatch(fetchBookmarks());
+  }, [dispatch]);
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -574,7 +582,7 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
                               </span>
                             </div>
                             <span className="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-600 text-[10px] font-black rounded-full scale-0 group-hover/item:scale-100 transition-transform">
-                              12
+                              {totalBookmarks}
                             </span>
                           </Link>
 

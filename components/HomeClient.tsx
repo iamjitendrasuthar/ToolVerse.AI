@@ -17,9 +17,6 @@ import {
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/Store/hooks";
-import { fetchTools } from "@/Store/slices/toolSlice";
-import { fetchBookmarks } from "@/Store/slices/userSlice";
 import ToolGrid from "./ToolGrid";
 
 export default function HomeClient({ categoryData }: { categoryData: any[] }) {
@@ -36,17 +33,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
   const yHeroText = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const yHeroImages = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const dispatch = useAppDispatch();
 
-  const { tools } = useAppSelector((state) => state.tools);
-
-  useEffect(() => {
-    dispatch(fetchTools());
-  }, [dispatch]);
-  const { bookmarkIds, user } = useAppSelector((state) => state.user);
-  useEffect(() => {
-    dispatch(fetchBookmarks());
-  }, [dispatch]);
   // Crisp Animation Variants
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
