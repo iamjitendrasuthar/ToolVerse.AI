@@ -1,8 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+
+const HIDDEN_LAYOUT_ROUTES = ["/login", "/forgot-password", "/reset-password"];
 
 export default function LayoutWrapper({
   children,
@@ -11,18 +14,17 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
 
-  // Check if current path is login
-  const isLoginPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password";
+  const hideLayout = useMemo(() => {
+    return HIDDEN_LAYOUT_ROUTES.includes(pathname);
+  }, [pathname]);
 
   return (
     <>
-      {/* Agar login page nahi hai, tabhi Navbar dikhega */}
-      {!isLoginPage && <Navbar />}
+      {!hideLayout && <Navbar />}
 
-      {children}
+      <main>{children}</main>
 
-      {/* Agar login page nahi hai, tabhi Footer dikhega */}
-      {!isLoginPage && <Footer />}
+      {!hideLayout && <Footer />}
     </>
   );
 }
