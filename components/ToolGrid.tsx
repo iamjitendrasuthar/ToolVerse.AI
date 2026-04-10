@@ -78,6 +78,15 @@ export default function ToolGrid({ CategoryWisetools, categoryName }: Props) {
 
     if (!session) {
       router.push("/login");
+      toast.error("Please login to bookmark your favorite tools!", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
       return;
     }
 
