@@ -27,6 +27,7 @@ import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/Store/hooks";
 import { fetchTools } from "@/Store/slices/toolSlice";
 import { fetchBookmarks } from "@/Store/slices/userSlice";
+import ToolGrid from "./ToolGrid";
 
 export default function HomeClient({ categoryData }: { categoryData: any[] }) {
   const containerRef = useRef(null);
@@ -616,147 +617,14 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
             </motion.div>
 
             {/* Tool Cards Grid - Updated for 2 per row (mobile) and 6 per row (desktop) */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-              {category.tools.length > 0 ? (
-                category.tools.map((tool: any, toolIndex: number) => (
-                  <motion.div
-                    // @ts-ignore
-                    variants={fadeUp as any}
-                    key={tool.slug}
-                    className="h-full"
-                  >
-                    <Link
-                      href={`/tool/${tool.slug}`}
-                      className="group flex flex-col h-full bg-white border border-slate-200/80 rounded-[1.25rem] overflow-hidden hover:border-blue-200 hover:shadow-[0_15px_30px_rgba(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-500 relative"
-                    >
-                      {/* Bookmark Button */}
-                      {bookmarkedToolIds.includes(tool._id || tool.slug) ? (
-                        <button
-                          className="absolute top-2 right-2 z-30 p-2 bg-blue-600 rounded-full text-white hover:bg-red-500 hover:scale-110 transition-all shadow-md cursor-pointer group/btn"
-                          onClick={(e) =>
-                            toggleBookmark(e, tool._id || tool.slug)
-                          }
-                        >
-                          <Bookmark
-                            size={14}
-                            className="fill-current group-hover/btn:hidden"
-                          />
-                          <Trash2
-                            size={14}
-                            className="hidden group-hover/btn:block"
-                          />
-                        </button>
-                      ) : (
-                        <button
-                          className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm cursor-pointer"
-                          onClick={(e) =>
-                            toggleBookmark(e, tool._id || tool.slug)
-                          }
-                        >
-                          <Bookmark
-                            size={14}
-                            strokeWidth={2.5}
-                            className="text-slate-400 hover:text-blue-600"
-                          />
-                        </button>
-                      )}
-
-                      {/* Top Banner - Height reduced for smaller cards */}
-                      <div className="h-[100px] w-full relative overflow-hidden bg-slate-100 p-1.5">
-                        <div className="w-full h-full rounded-xl overflow-hidden relative border border-slate-200/50">
-                          <img
-                            src={
-                              tool.imageUrl ||
-                              getCategoryImage(category.name, toolIndex)
-                            }
-                            alt={`${tool.name} banner`}
-                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="px-3 pt-6 pb-4 flex flex-col flex-grow relative bg-white z-20">
-                        {/* Avatar - Scaled down */}
-                        <div className="absolute -top-6 left-3 w-10 h-10 rounded-xl bg-white border-[3px] border-white shadow-md flex items-center justify-center overflow-hidden z-20 group-hover:-translate-y-0.5 transition-transform">
-                          <img
-                            src={`https://ui-avatars.com/api/?name=${tool.name}&background=random&color=fff&size=100&bold=true`}
-                            alt={tool.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-
-                        <div className="flex justify-between items-start gap-1 mt-1 mb-1.5">
-                          <h3 className="text-sm font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                            {tool.name}
-                          </h3>
-                          {tool.rating >= 4.8 && (
-                            <CheckCircle2
-                              size={12}
-                              className="text-blue-500 fill-blue-50 shrink-0"
-                            />
-                          )}
-                        </div>
-
-                        <p className="text-slate-500 text-[11px] leading-relaxed font-medium line-clamp-2 mb-3 flex-grow">
-                          {tool.description}
-                        </p>
-
-                        {/* Tags - Scaled down for density */}
-                        <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-                          <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border ${
-                              tool.pricing === "Free"
-                                ? "bg-emerald-50 border-emerald-100 text-emerald-700"
-                                : "bg-blue-50 border-blue-100 text-blue-700"
-                            }`}
-                          >
-                            {tool.pricing}
-                          </span>
-                        </div>
-
-                        {/* Footer */}
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
-                          <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">
-                            <Star
-                              size={10}
-                              className="fill-amber-400 text-amber-500"
-                            />
-                            <span className="font-bold text-amber-700 text-[10px]">
-                              {tool.rating}
-                            </span>
-                          </div>
-                          <div className="flex items-center text-xs sm:text-sm font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
-                            Explore
-                            <ArrowUpRight
-                              size={16}
-                              className="ml-1 opacity-100 sm:opacity-0 sm:-translate-x-2 sm:translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-x-0 sm:group-hover:translate-y-0 transition-all duration-300"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))
-              ) : (
-                <div className="col-span-full py-14 sm:py-20 px-4 sm:px-6 rounded-[2rem] sm:rounded-[2.5rem] bg-slate-50 border-2 border-slate-200 border-dashed flex flex-col items-center justify-center text-center shadow-sm">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl border border-slate-100 flex items-center justify-center mb-5 sm:mb-6 shadow-sm">
-                    <Rocket
-                      size={24}
-                      className="sm:w-7 sm:h-7 text-slate-400"
-                    />
-                  </div>
-
-                  <p className="text-slate-900 font-bold text-lg sm:text-xl mb-1">
-                    Curating New Tools
-                  </p>
-
-                  <p className="text-slate-500 text-sm font-medium max-w-md">
-                    Our system is gathering the best AI tools for this category.
-                  </p>
-                </div>
-              )}
-            </div>
+            <ToolGrid
+              tools={category.tools}
+              categoryName={category.name}
+              bookmarkedToolIds={bookmarkedToolIds}
+              toggleBookmark={toggleBookmark}
+              getCategoryImage={getCategoryImage}
+              fadeUp={fadeUp}
+            />
           </motion.div>
         ))}
       </section>
