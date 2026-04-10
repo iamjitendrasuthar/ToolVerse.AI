@@ -18,9 +18,15 @@ import {
   Cpu,
   LayoutGrid,
   X,
+  Trash2,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useAppDispatch, useAppSelector } from "@/Store/hooks";
+import { fetchTools } from "@/Store/slices/toolSlice";
+import { fetchBookmarks } from "@/Store/slices/userSlice";
 
 export default function HomeClient({ categoryData }: { categoryData: any[] }) {
   const containerRef = useRef(null);
@@ -36,7 +42,17 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
   const yHeroText = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const yHeroImages = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const dispatch = useAppDispatch();
 
+  const { tools } = useAppSelector((state) => state.tools);
+
+  useEffect(() => {
+    dispatch(fetchTools());
+  }, [dispatch]);
+  const { bookmarkIds, user } = useAppSelector((state) => state.user);
+  useEffect(() => {
+    dispatch(fetchBookmarks());
+  }, [dispatch]);
   // Crisp Animation Variants
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -138,6 +154,55 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
       ].includes(category.name),
     ),
   ];
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [bookmarkedToolIds, setBookmarkedToolIds] = useState<string[]>([]);
+
+  const toggleBookmark = async (e: React.MouseEvent, toolId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    const isAlreadyBookmarked = bookmarkedToolIds.includes(toolId);
+
+    // Optimistic UI Update
+    setBookmarkedToolIds((prev) =>
+      isAlreadyBookmarked
+        ? prev.filter((id) => id !== toolId)
+        : [...prev, toolId],
+    );
+
+    try {
+      const res = await fetch("/api/bookmarks/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ toolId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update bookmark");
+      }
+    } catch (error) {
+      // Rollback on error
+      setBookmarkedToolIds((prev) =>
+        isAlreadyBookmarked
+          ? [...prev, toolId]
+          : prev.filter((id) => id !== toolId),
+      );
+
+      console.error("Bookmark sync error:", error);
+      alert("Could not save bookmark. Please try again.");
+    }
+  };
+
   return (
     <main
       ref={containerRef}
@@ -551,7 +616,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
             </motion.div>
 
             {/* Tool Cards Grid - Updated for 2 per row (mobile) and 6 per row (desktop) */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
               {category.tools.length > 0 ? (
                 category.tools.map((tool: any, toolIndex: number) => (
                   <motion.div
@@ -564,13 +629,37 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                       href={`/tool/${tool.slug}`}
                       className="group flex flex-col h-full bg-white border border-slate-200/80 rounded-[1.25rem] overflow-hidden hover:border-blue-200 hover:shadow-[0_15px_30px_rgba(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-500 relative"
                     >
-                      {/* Floating Bookmark - Smaller for tight grid */}
-                      <button
-                        className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm cursor-pointer"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <Bookmark size={14} strokeWidth={2.5} />
-                      </button>
+                      {/* Bookmark Button */}
+                      {bookmarkedToolIds.includes(tool._id || tool.slug) ? (
+                        <button
+                          className="absolute top-2 right-2 z-30 p-2 bg-blue-600 rounded-full text-white hover:bg-red-500 hover:scale-110 transition-all shadow-md cursor-pointer group/btn"
+                          onClick={(e) =>
+                            toggleBookmark(e, tool._id || tool.slug)
+                          }
+                        >
+                          <Bookmark
+                            size={14}
+                            className="fill-current group-hover/btn:hidden"
+                          />
+                          <Trash2
+                            size={14}
+                            className="hidden group-hover/btn:block"
+                          />
+                        </button>
+                      ) : (
+                        <button
+                          className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm cursor-pointer"
+                          onClick={(e) =>
+                            toggleBookmark(e, tool._id || tool.slug)
+                          }
+                        >
+                          <Bookmark
+                            size={14}
+                            strokeWidth={2.5}
+                            className="text-slate-400 hover:text-blue-600"
+                          />
+                        </button>
+                      )}
 
                       {/* Top Banner - Height reduced for smaller cards */}
                       <div className="h-[100px] w-full relative overflow-hidden bg-slate-100 p-1.5">

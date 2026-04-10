@@ -2,6 +2,7 @@ import Provider from "@/components/Provider";
 import "./globals.css";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { Toaster } from "sonner";
+import Providers from "@/Store/providers";
 
 export const metadata = {
   title: "ToolsVerse AI",
@@ -18,10 +19,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-[#fafcff]">
         <Provider>
-          <LayoutWrapper>
-            {children}
-            <Toaster position="top-center" richColors />
-          </LayoutWrapper>
+          <Providers>
+            <LayoutWrapper>
+              {children}
+              <Toaster position="top-center" richColors />
+            </LayoutWrapper>
+          </Providers>
         </Provider>
       </body>
     </html>

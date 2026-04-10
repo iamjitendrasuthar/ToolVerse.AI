@@ -18,12 +18,7 @@ export async function GET() {
     }
 
     const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email,
-      },
-      select: {
-        bookmarkIds: true,
-      },
+      where: { email: session.user.email },
     });
 
     if (!user) {
@@ -33,35 +28,36 @@ export async function GET() {
       );
     }
 
-    if (!user.bookmarkIds || user.bookmarkIds.length === 0) {
-      return NextResponse.json({
-        success: true,
-        bookmarks: [],
-        count: 0,
-      });
-    }
+    const bookmarkIds: string[] = user.bookmarkIds || [];
 
-    // MongoDB connection
-    const connection = await connectToDatabase();
+    await connectToDatabase();
 
-    // Native MongoDB db instance
     const db = mongoose.connection.db;
 
     if (!db) {
       throw new Error("Database connection not found");
     }
 
-    const bookmarkedTools = await db
-      .collection("tools")
-      .find({
-        _id: {
-          $in: user.bookmarkIds.map((id) => new ObjectId(id)),
-        },
-      })
-      .toArray();
+    const bookmarkedTools =
+      bookmarkIds.length > 0
+        ? await db
+            .collection("tools")
+            .find({
+              _id: {
+                $in: bookmarkIds.map((id) => new ObjectId(id)),
+              },
+            })
+            .toArray()
+        : [];
 
     return NextResponse.json({
       success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        bookmarkIds,
+      },
       bookmarks: bookmarkedTools,
       count: bookmarkedTools.length,
     });
@@ -72,7 +68,6 @@ export async function GET() {
       {
         success: false,
         message: "Internal Server Error",
-        error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

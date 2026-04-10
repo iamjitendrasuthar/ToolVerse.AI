@@ -3,6 +3,7 @@ import connectToDatabase from "@/lib/mongodb";
 import Tool from "@/models/Tool";
 
 type ToolType = {
+  _id: string;
   name: string;
   slug: string;
   category?: string;
@@ -17,7 +18,7 @@ export async function GET() {
     await connectToDatabase();
 
     const tools = (await Tool.find()
-      .select("name slug category pricing rating imageUrl websiteUrl")
+      .select("_id name slug category pricing rating imageUrl websiteUrl")
       .lean()) as ToolType[];
 
     const uniqueCategories = Array.from(
@@ -32,10 +33,12 @@ export async function GET() {
       href: `/category/${cat.toLowerCase().replace(/ /g, "-")}`,
     }));
 
-    const toolsData = tools.map((t) => ({
+    const toolsData = tools.map((t: any) => ({
+      _id: t._id.toString(),
       name: t.name,
       slug: t.slug,
       category: t.category,
+      pricing: t.pricing,
       href: `/tool/${t.slug}`,
       rating: t.rating,
       imageUrl: t.imageUrl,
@@ -43,12 +46,19 @@ export async function GET() {
     }));
 
     return NextResponse.json({
+      success: true,
       tools: toolsData,
       categories: uniqueCategories,
     });
   } catch (error) {
-    console.error("Search API Error:", error);
+    console.error("Tools API Error:", error);
 
-    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to fetch tools",
+      },
+      { status: 500 },
+    );
   }
 }
