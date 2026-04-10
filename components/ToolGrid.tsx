@@ -10,6 +10,9 @@ import {
   Rocket,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 type Tool = {
   _id?: string;
@@ -24,20 +27,85 @@ type Tool = {
 type Props = {
   tools: Tool[];
   categoryName: string;
-  bookmarkedToolIds: string[];
-  toggleBookmark: (e: React.MouseEvent, toolId: string) => void;
-  getCategoryImage: (categoryName: string, index: number) => string;
   fadeUp: any;
 };
 
-export default function ToolGrid({
-  tools,
-  categoryName,
-  bookmarkedToolIds,
-  toggleBookmark,
-  getCategoryImage,
-  fadeUp,
-}: Props) {
+export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [bookmarkedToolIds, setBookmarkedToolIds] = useState<string[]>([]);
+
+  const toggleBookmark = async (e: React.MouseEvent, toolId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    const isAlreadyBookmarked = bookmarkedToolIds.includes(toolId);
+
+    // Optimistic UI Update
+    setBookmarkedToolIds((prev) =>
+      isAlreadyBookmarked
+        ? prev.filter((id) => id !== toolId)
+        : [...prev, toolId],
+    );
+
+    try {
+      const res = await fetch("/api/bookmarks/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ toolId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update bookmark");
+      }
+    } catch (error) {
+      // Rollback on error
+      setBookmarkedToolIds((prev) =>
+        isAlreadyBookmarked
+          ? [...prev, toolId]
+          : prev.filter((id) => id !== toolId),
+      );
+
+      console.error("Bookmark sync error:", error);
+      alert("Could not save bookmark. Please try again.");
+    }
+  };
+
+  // Premium abstract images for tools
+  const getCategoryImage = (categoryName: string, index: number) => {
+    const images: any = {
+      "Coding Tools": [
+        "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
+      ],
+      "Image Generation": [
+        "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=80&w=800&auto=format&fit=crop",
+      ],
+      "Video Editing": [
+        "https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1536240478700-b869070f9279?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
+      ],
+      "Writing Tools": [
+        "https://images.unsplash.com/photo-1455390582262-044cdead27d8?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?q=80&w=800&auto=format&fit=crop",
+      ],
+    };
+    return images[categoryName]?.[index % 3] || images["Coding Tools"][0];
+  };
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
       {tools.length > 0 ? (
@@ -82,8 +150,7 @@ export default function ToolGrid({
                 <div className="w-full h-full rounded-xl overflow-hidden relative border border-slate-200/50">
                   <img
                     src={
-                      tool.imageUrl ||
-                      getCategoryImage(category.name, toolIndex)
+                      tool.imageUrl || getCategoryImage(categoryName, toolIndex)
                     }
                     alt={`${tool.name} banner`}
                     className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-transform duration-700 ease-out"
