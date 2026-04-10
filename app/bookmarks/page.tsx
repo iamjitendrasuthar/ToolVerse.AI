@@ -12,8 +12,11 @@ import {
   Trash2,
   Library,
   Loader2,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 interface ToolType {
   _id: string; // MongoDB ID mandatory hai indexing ke liye
@@ -30,7 +33,8 @@ export default function BookmarksPage() {
   const [bookmarkedTools, setBookmarkedTools] = useState<ToolType[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
-
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   useEffect(() => {
     setIsMounted(true);
 
@@ -79,24 +83,49 @@ export default function BookmarksPage() {
     }
   };
 
-  // 3. Clear All Bookmarks (Optional: Requires a bulk delete API)
   const clearAllBookmarks = async () => {
-    if (
-      confirm(
-        "Are you sure you want to remove all saved tools from your account?",
-      )
-    ) {
-      const previous = [...bookmarkedTools];
-      setBookmarkedTools([]);
+    if (bookmarkedTools.length === 0) return;
 
-      try {
-        // Aap ek dedicated endpoint bana sakte hain clear karne ke liye
-        const res = await fetch("/api/bookmarks/clear", { method: "DELETE" });
-        if (!res.ok) throw new Error();
-      } catch (error) {
-        setBookmarkedTools(previous);
-        alert("Could not clear bookmarks. Try again.");
+    setShowClearConfirm(false);
+    setIsClearing(true);
+
+    const previous = [...bookmarkedTools];
+
+    // Optimistic Update: UI se turant hata dein
+    setBookmarkedTools([]);
+
+    // Ek loading toast dikhayein jo process khatam hone par update hoga
+    const loadingToast = toast.loading(
+      `Clearing ${previous.length} bookmarks...`,
+    );
+
+    try {
+      for (const tool of previous) {
+        const toolId = tool._id;
+
+        const res = await fetch("/api/bookmarks/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ toolId }),
+        });
+
+        if (!res.ok) {
+          console.error(`Failed to delete tool: ${toolId}`);
+        }
       }
+
+      // Success toast update
+      toast.success("All bookmarks cleared successfully!", {
+        id: loadingToast,
+      });
+    } catch (error) {
+      setBookmarkedTools(previous);
+      toast.error("Process incomplete. Please try again.", {
+        id: loadingToast,
+      });
+      console.error("Bulk delete error:", error);
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -104,12 +133,82 @@ export default function BookmarksPage() {
 
   return (
     <main className="min-h-screen bg-[#fafcff] text-slate-900 overflow-hidden selection:bg-blue-200 selection:text-blue-900 pb-24">
+      {/* --- CUSTOM CONFIRM MODAL --- */}
+      <AnimatePresence>
+        {showClearConfirm && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowClearConfirm(false)}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm cursor-pointer"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 md:p-8 z-[101]"
+            >
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mb-6 text-red-500">
+                <AlertTriangle size={28} />
+              </div>
+
+              <h3 className="text-2xl font-black text-slate-900 mb-2">
+                Clear Library?
+              </h3>
+              <p className="text-slate-500 font-medium mb-8">
+                This will permanently remove all{" "}
+                <span className="text-slate-900 font-bold">
+                  {bookmarkedTools.length} tools
+                </span>{" "}
+                from your collection. This cannot be undone.
+              </p>
+
+              <div className="flex flex-col-reverse sm:grid sm:grid-cols-2 gap-3 mt-6">
+                {/* Cancel Button - Mobile par niche aayega (flex-col-reverse ki wajah se) */}
+                <button
+                  onClick={() => setShowClearConfirm(false)}
+                  className="w-full px-6 py-4 sm:py-3.5 rounded-2xl font-bold text-slate-400 bg-transparent hover:text-slate-600 hover:bg-slate-50 transition-all duration-200 cursor-pointer active:scale-95 text-sm sm:text-base"
+                >
+                  Cancel
+                </button>
+
+                {/* Clear All Button - Mobile par upar dikhega aur primary focus rahega */}
+                <button
+                  onClick={clearAllBookmarks}
+                  className="group relative w-full px-5 py-3 sm:py-3 rounded-xl font-bold text-red-600 border-[1.5px] border-red-100 hover:border-red-500 hover:bg-red-50 transition-all duration-300 cursor-pointer active:scale-95 flex items-center justify-center gap-2 overflow-hidden text-[13px] tracking-tight"
+                >
+                  {/* Subtle Glow Effect on Hover */}
+                  <span className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/5 transition-colors duration-300" />
+
+                  <Trash2
+                    size={14}
+                    className="group-hover:rotate-12 transition-transform duration-300"
+                  />
+                  <span>Yes, Clear All</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- BACKGROUND BLOBS --- */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-200/20 blur-[80px] md:blur-[120px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-indigo-200/20 blur-[70px] md:blur-[100px] rounded-full" />
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-6 pt-30 md:pt-32">
+        {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs md:text-sm font-bold text-slate-400 mb-6 md:mb-8 overflow-x-auto whitespace-nowrap no-scrollbar">
           <Link href="/" className="hover:text-blue-600 transition-colors">
             Home
@@ -118,6 +217,7 @@ export default function BookmarksPage() {
           <span className="text-slate-900">Saved Tools</span>
         </nav>
 
+        {/* Header Section */}
         <header className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -134,8 +234,7 @@ export default function BookmarksPage() {
               </span>
             </h1>
             <p className="text-base md:text-lg text-slate-500 font-medium leading-relaxed">
-              Your personal collection from our database. Access them anytime
-              across devices.
+              Your personal collection. Access them anytime across devices.
             </p>
           </motion.div>
 
@@ -143,14 +242,21 @@ export default function BookmarksPage() {
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              onClick={clearAllBookmarks}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-xl font-bold text-sm transition-all shadow-sm cursor-pointer"
+              onClick={() => setShowClearConfirm(true)}
+              disabled={isClearing}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-xl font-bold text-sm transition-all shadow-sm cursor-pointer disabled:opacity-50"
             >
-              <Trash2 size={16} /> Clear All
+              {isClearing ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Trash2 size={16} />
+              )}
+              Clear All
             </motion.button>
           )}
         </header>
 
+        {/* Grid Section */}
         <section className="relative z-20">
           <AnimatePresence mode="popLayout">
             {loading ? (
@@ -246,7 +352,7 @@ export default function BookmarksPage() {
                           )}
                         </div>
                         <p className="text-slate-500 text-[11px] leading-relaxed font-medium line-clamp-2 mb-4 flex-grow">
-                          {tool.description || "Detailed AI tool overview..."}
+                          {tool.description}
                         </p>
                         <div className="flex items-center gap-1.5 mb-4 flex-wrap">
                           <span
