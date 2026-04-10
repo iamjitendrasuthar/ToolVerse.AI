@@ -6,24 +6,17 @@ import {
   ArrowRight,
   Star,
   Sparkles,
-  ArrowUpRight,
-  CheckCircle2,
   PlayCircle,
   Image as ImageIcon,
   Code,
   PenTool,
-  Bookmark,
   Zap,
-  Rocket,
   Cpu,
   LayoutGrid,
   X,
-  Trash2,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/Store/hooks";
 import { fetchTools } from "@/Store/slices/toolSlice";
 import { fetchBookmarks } from "@/Store/slices/userSlice";
@@ -544,9 +537,8 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
 
             {/* Tool Cards Grid - Updated for 2 per row (mobile) and 6 per row (desktop) */}
             <ToolGrid
-              tools={category.tools}
+              CategoryWisetools={category.tools}
               categoryName={category.name}
-              fadeUp={fadeUp}
             />
           </motion.div>
         ))}

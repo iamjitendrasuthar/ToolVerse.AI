@@ -77,6 +77,19 @@ const userSlice = createSlice({
       state.user = null;
       state.isLoggedIn = false;
     },
+    /* ⭐ ADD THIS */
+    addBookmarkLocal: (state, action: PayloadAction<string>) => {
+      if (!state.bookmarkIds.includes(action.payload)) {
+        state.bookmarkIds.push(action.payload);
+      }
+    },
+
+    /* ⭐ ADD THIS */
+    removeBookmarkLocal: (state, action: PayloadAction<string>) => {
+      state.bookmarkIds = state.bookmarkIds.filter(
+        (id) => id !== action.payload,
+      );
+    },
   },
 
   extraReducers: (builder) => {
@@ -105,5 +118,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, logout, addBookmarkLocal, removeBookmarkLocal } =
+  userSlice.actions;
 export default userSlice.reducer;

@@ -6,13 +6,20 @@ import {
   CheckCircle2,
   ArrowUpRight,
   Bookmark,
-  Trash2,
   Rocket,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/Store/hooks";
+import { fetchTools } from "@/Store/slices/toolSlice";
+import {
+  addBookmarkLocal,
+  fetchBookmarks,
+  removeBookmarkLocal,
+} from "@/Store/slices/userSlice";
+import { toast } from "sonner";
 
 type Tool = {
   _id?: string;
@@ -25,15 +32,45 @@ type Tool = {
 };
 
 type Props = {
-  tools: Tool[];
+  CategoryWisetools: Tool[];
   categoryName: string;
-  fadeUp: any;
 };
 
-export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 80, damping: 20 },
+  },
+};
+
+export default function ToolGrid({ CategoryWisetools, categoryName }: Props) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [bookmarkedToolIds, setBookmarkedToolIds] = useState<string[]>([]);
+
+  const dispatch = useAppDispatch();
+
+  const { bookmarkIds } = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(fetchTools());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchBookmarks());
+  }, [dispatch]);
+
+  // 🔥 Add isBookmarked flag using Redux data
+  const updatedTools = CategoryWisetools.map((tool) => {
+    const id = tool._id || tool.slug;
+
+    return {
+      ...tool,
+      isBookmarked: tool._id ? bookmarkIds.includes(tool._id) : false,
+      id,
+    };
+  });
 
   const toggleBookmark = async (e: React.MouseEvent, toolId: string) => {
     e.preventDefault();
@@ -44,14 +81,16 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
       return;
     }
 
-    const isAlreadyBookmarked = bookmarkedToolIds.includes(toolId);
+    const isBookmarked = bookmarkIds.includes(toolId);
 
-    // Optimistic UI Update
-    setBookmarkedToolIds((prev) =>
-      isAlreadyBookmarked
-        ? prev.filter((id) => id !== toolId)
-        : [...prev, toolId],
-    );
+    // 🔥 INSTANT UI UPDATE
+    if (isBookmarked) {
+      dispatch(removeBookmarkLocal(toolId));
+      toast.success("Bookmark removed");
+    } else {
+      dispatch(addBookmarkLocal(toolId));
+      toast.success("Bookmark added");
+    }
 
     try {
       const res = await fetch("/api/bookmarks/toggle", {
@@ -68,19 +107,19 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
         throw new Error(data.message || "Failed to update bookmark");
       }
     } catch (error) {
-      // Rollback on error
-      setBookmarkedToolIds((prev) =>
-        isAlreadyBookmarked
-          ? [...prev, toolId]
-          : prev.filter((id) => id !== toolId),
-      );
+      console.error("Bookmark error:", error);
 
-      console.error("Bookmark sync error:", error);
-      alert("Could not save bookmark. Please try again.");
+      // 🔄 ROLLBACK
+      if (isBookmarked) {
+        dispatch(addBookmarkLocal(toolId));
+        toast.error("Failed to remove bookmark");
+      } else {
+        dispatch(removeBookmarkLocal(toolId));
+        toast.error("Failed to add bookmark");
+      }
     }
   };
 
-  // Premium abstract images for tools
   const getCategoryImage = (categoryName: string, index: number) => {
     const images: any = {
       "Coding Tools": [
@@ -104,12 +143,14 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
         "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?q=80&w=800&auto=format&fit=crop",
       ],
     };
+
     return images[categoryName]?.[index % 3] || images["Coding Tools"][0];
   };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-      {tools.length > 0 ? (
-        tools.map((tool, toolIndex) => (
+      {updatedTools.length > 0 ? (
+        updatedTools.map((tool, toolIndex) => (
           <motion.div
             // @ts-ignore
             variants={fadeUp as any}
@@ -120,30 +161,20 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
               href={`/tool/${tool.slug}`}
               className="group flex flex-col h-full bg-white border border-slate-200/80 rounded-[1.25rem] overflow-hidden hover:border-blue-200 hover:shadow-[0_15px_30px_rgba(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-500 relative"
             >
-              {/* Bookmark Button */}
-              {bookmarkedToolIds.includes(tool._id || tool.slug) ? (
-                <button
-                  className="absolute top-2 right-2 z-30 p-2 bg-blue-600 rounded-full text-white hover:bg-red-500 hover:scale-110 transition-all shadow-md cursor-pointer group/btn"
-                  onClick={(e) => toggleBookmark(e, tool._id || tool.slug)}
-                >
-                  <Bookmark
-                    size={14}
-                    className="fill-current group-hover/btn:hidden"
-                  />
-                  <Trash2 size={14} className="hidden group-hover/btn:block" />
-                </button>
-              ) : (
-                <button
-                  className="absolute top-2 right-2 z-30 p-1.5 bg-white/80 backdrop-blur-md rounded-full text-slate-400 hover:text-blue-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-sm cursor-pointer"
-                  onClick={(e) => toggleBookmark(e, tool._id || tool.slug)}
-                >
-                  <Bookmark
-                    size={14}
-                    strokeWidth={2.5}
-                    className="text-slate-400 hover:text-blue-600"
-                  />
-                </button>
-              )}
+              <button
+                className={`absolute top-2 right-2 z-30 p-2 rounded-full transition-all shadow-md cursor-pointer ${
+                  tool.isBookmarked
+                    ? "bg-blue-600 text-white"
+                    : "bg-white/80 text-slate-400 hover:text-blue-600"
+                }`}
+                onClick={(e) => toggleBookmark(e, tool.id)}
+              >
+                <Bookmark
+                  size={14}
+                  className={tool.isBookmarked ? "fill-current" : ""}
+                  strokeWidth={2.5}
+                />
+              </button>
 
               {/* Image */}
               <div className="h-[100px] w-full relative overflow-hidden bg-slate-100 p-1.5">
@@ -160,8 +191,7 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
 
               {/* Content */}
               <div className="px-3 pt-6 pb-4 flex flex-col flex-grow relative bg-white z-20">
-                {/* Avatar - Scaled down */}
-                <div className="absolute -top-6 left-3 w-10 h-10 rounded-xl bg-white border-[3px] border-white shadow-md flex items-center justify-center overflow-hidden z-20 group-hover:-translate-y-0.5 transition-transform">
+                <div className="absolute -top-6 left-3 w-10 h-10 rounded-xl bg-white border-[3px] border-white shadow-md flex items-center justify-center overflow-hidden z-20">
                   <img
                     src={`https://ui-avatars.com/api/?name=${tool.name}&background=random&color=fff&size=100&bold=true`}
                     alt={tool.name}
@@ -173,6 +203,7 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
                   <h3 className="text-sm font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
                     {tool.name}
                   </h3>
+
                   {tool.rating >= 4.8 && (
                     <CheckCircle2
                       size={12}
@@ -185,7 +216,6 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
                   {tool.description}
                 </p>
 
-                {/* Tags - Scaled down for density */}
                 <div className="flex items-center gap-1.5 mb-3 flex-wrap">
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border ${
@@ -198,7 +228,6 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
                   </span>
                 </div>
 
-                {/* Footer */}
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
                   <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">
                     <Star size={10} className="fill-amber-400 text-amber-500" />
@@ -206,12 +235,12 @@ export default function ToolGrid({ tools, categoryName, fadeUp }: Props) {
                       {tool.rating}
                     </span>
                   </div>
-                  <div className="flex items-center text-xs sm:text-sm font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
+                  <div className="flex items-center text-xs font-bold text-slate-400 group-hover:text-blue-600">
                     Explore
                     <ArrowUpRight
                       size={16}
                       className="ml-1 opacity-100 sm:opacity-0 sm:-translate-x-2 sm:translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-x-0 sm:group-hover:translate-y-0 transition-all duration-300"
-                    />
+                    />{" "}
                   </div>
                 </div>
               </div>
