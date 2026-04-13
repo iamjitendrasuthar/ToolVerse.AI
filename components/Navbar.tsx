@@ -781,23 +781,34 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
                   <div className="flex-1 h-12 bg-neutral-100 rounded-[1.5rem]"></div>
                 </div>
               ) : session?.user ? (
-                /* --- LOGGED IN VIEW --- */
-                <div className="flex flex-col gap-3">
-                  {/* User Info Brief */}
-                  <div className="flex items-center gap-3 px-2 mb-2">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-black shadow-sm">
-                      {session.user.name?.charAt(0).toUpperCase()}
+                <div className="flex flex-col gap-4">
+                  {/* 1. Profile Card Section */}
+                  <div className="bg-neutral-50/80 border border-neutral-100 p-4 rounded-[2.2rem] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-lg font-black shadow-lg shadow-blue-500/20">
+                          {session.user.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-4 border-neutral-50 rounded-full"></span>
+                      </div>
+                      <div className="overflow-hidden">
+                        <p className="text-[15px] font-black text-neutral-800 truncate leading-none mb-1">
+                          {session.user.name}
+                        </p>
+                        <p className="text-[11px] text-neutral-400 truncate font-medium tracking-tight">
+                          {session.user.email}
+                        </p>
+                      </div>
                     </div>
-                    <div className="overflow-hidden">
-                      <p className="text-sm font-black text-neutral-800 truncate">
-                        {session.user.name}
-                      </p>
-                      <p className="text-[11px] text-neutral-400 truncate tracking-tight font-medium">
-                        {session.user.email}
-                      </p>
-                    </div>
-                  </div>
 
+                    <Link
+                      href="/profile/edit"
+                      onClick={() => setIsOpen(false)}
+                      className="p-2.5 bg-white rounded-xl border border-neutral-200 shadow-sm text-neutral-500 hover:text-blue-600 active:scale-90 transition-all"
+                    >
+                      <Edit3 size={18} />
+                    </Link>
+                  </div>
                   <div className="flex items-center gap-3">
                     {/* Bookmarks Button */}
                     <Link
@@ -823,27 +834,25 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
                   </div>
                 </div>
               ) : (
-                /* --- LOGGED OUT VIEW --- */
-                <div className="flex items-center gap-3">
-                  {/* Login Button */}
+                /* --- LOGGED OUT VIEW (Modern Glass Style) --- */
+                <div className="flex flex-col gap-3">
                   <Link
                     href="/login"
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 py-4 rounded-[1.5rem] bg-neutral-900 text-white font-bold text-[14px] text-center shadow-lg shadow-neutral-900/10 active:scale-95 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4.5 rounded-[1.8rem] bg-neutral-900 text-white font-bold text-[15px] flex items-center justify-center gap-3 shadow-2xl shadow-neutral-900/20 active:scale-95 transition-all"
                   >
-                    <UserCircle2 size={18} />
-                    Login
+                    <div className="bg-white/10 p-1.5 rounded-lg">
+                      <UserCircle2 size={18} />
+                    </div>
+                    Sign in to Account
                   </Link>
 
-                  {/* Saved/Bookmarks Button */}
-                  <Link
-                    href="/bookmarks"
-                    onClick={() => setIsOpen(false)}
-                    className="flex-1 py-4 rounded-[1.5rem] bg-neutral-100 text-neutral-600 font-bold text-[14px] text-center active:scale-95 transition-all flex items-center justify-center gap-2 border border-neutral-200/50"
-                  >
-                    <Bookmark size={18} />
-                    Saved
-                  </Link>
+                  <p className="text-[11px] text-center text-neutral-400 font-bold uppercase tracking-[0.2em]">
+                    New to ToolsVerse?{" "}
+                    <Link href="/login" className="text-blue-600 ml-1">
+                      Join Now
+                    </Link>
+                  </p>
                 </div>
               )}
             </div>
