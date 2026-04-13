@@ -588,7 +588,7 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
                           </Link>
 
                           <Link
-                            href="/settings"
+                            href="/profile/edit"
                             className="flex items-center gap-3 w-full px-4 py-3 rounded-[1.2rem] text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/50 transition-all"
                           >
                             <div className="p-2 bg-neutral-100 rounded-xl">

@@ -12,6 +12,8 @@ model User {
   name      String?
   email     String   @unique
   password  String
+  mobile      String?
+  profession  String?
   createdAt DateTime @default(now())
   resetToken         String?
   resetTokenExpiry   DateTime?
