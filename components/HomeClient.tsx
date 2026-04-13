@@ -280,31 +280,46 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
           style={{ y: yHeroText }}
           className="flex flex-col items-center lg:items-start text-center lg:text-left lg:col-span-6 xl:col-span-6 will-change-transform"
         >
-          {/* Animated Badge */}
+          {/* Animated Badge - Refined with subtle pulse */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            whileHover={{ scale: 1.05 }}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50/50 backdrop-blur-md border border-blue-100 shadow-sm mb-8 group hover:bg-blue-100/50 transition-all cursor-default"
           >
-            <div className="bg-blue-600 p-1 rounded-full group-hover:rotate-12 transition-transform">
+            <motion.div
+              animate={{ rotate: [0, 15, -15, 0] }}
+              transition={{
+                repeat: Infinity,
+                duration: 2.5,
+                ease: "easeInOut",
+              }}
+              className="bg-blue-600 p-1 rounded-full"
+            >
               <Sparkles size={12} className="text-white" />
-            </div>
+            </motion.div>
             <span className="text-[11px] md:text-xs font-bold text-blue-700 uppercase tracking-widest">
               The Future of Workflow
             </span>
           </motion.div>
 
-          {/* Main Heading with Gradient Text */}
+          {/* Main Heading - Staggered entrance */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-8 leading-[1] text-slate-900"
           >
             Accelerate with <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 1 }}
+              className="text-transparent bg-clip-text bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600"
+            >
               AI Precision
-            </span>
+            </motion.span>
           </motion.h1>
 
           <motion.p
@@ -317,93 +332,100 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
             Filter, compare, and deploy the tech that puts you ahead.
           </motion.p>
 
-          {/* Modern Search Bar */}
+          {/* Modern Search Bar - Spring Scale on Hover */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full max-w-2xl relative group"
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-[30px] blur opacity-10 group-focus-within:opacity-25 transition duration-500"></div>
 
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-[30px] blur opacity-10 group-focus-within:opacity-25 transition duration-500"></div>
-
-            <div
+            <motion.div
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setIsSearchOpen(true)}
               className="relative flex items-center bg-white border border-slate-200/80 rounded-2xl p-1.5 shadow-xl cursor-pointer hover:border-blue-400 transition-all"
             >
               <div className="flex items-center flex-1 px-4 gap-3">
                 <Search
-                  className="text-slate-400 group-focus-within:text-blue-600 transition-colors"
+                  className="text-slate-400 group-hover:text-blue-600 transition-colors"
                   size={20}
                 />
                 <input
                   type="text"
+                  readOnly
                   placeholder="What do you want to build today?"
-                  className="w-full py-3 bg-transparent text-slate-800 placeholder:text-slate-400 outline-none text-base md:text-lg font-medium"
+                  className="w-full py-3 bg-transparent text-slate-800 placeholder:text-slate-400 outline-none text-base md:text-lg font-medium cursor-pointer"
                 />
               </div>
 
-              <button className="bg-slate-900 hover:bg-blue-600 text-white px-6 md:px-8 py-3 rounded-[14px] font-bold text-sm md:text-base transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="bg-slate-900 hover:bg-blue-600 text-white px-6 md:px-8 py-3 rounded-[14px] font-bold text-sm md:text-base transition-all flex items-center gap-2"
+              >
                 Search Tools
                 <ArrowRight size={18} />
-              </button>
-            </div>
-
-            {/* Quick Tags */}
-            <div className="flex gap-4 mt-4 overflow-x-auto no-scrollbar pb-2">
-              {["Video Gen", "Coding", "Writing"].map((tag) => (
-                <button
-                  key={tag}
-                  className="whitespace-nowrap text-[12px] font-bold text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-wider cursor-pointer"
-                >
-                  #{tag}
-                </button>
-              ))}
-            </div>
+              </motion.button>
+            </motion.div>
           </motion.div>
         </motion.div>
 
         {/* Right Column: Premium Visualizer */}
         <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           style={{ y: yHeroImages }}
           className="relative z-20 flex lg:col-span-6 xl:col-span-6 h-full items-center justify-center min-h-[450px] w-full will-change-transform"
         >
           <div className="relative w-full max-w-[550px] aspect-square flex items-center justify-center">
-            {/* Background Decorative Elements */}
+            {/* Background Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-100/30 rounded-full blur-[100px] -z-10 animate-pulse" />
 
-            {/* The Floating UI Card */}
+            {/* The Floating UI Card - Enhanced 3D-like float */}
             <motion.div
               animate={{
-                y: [-15, 15, -15],
-                rotate: [-1, 1, -1],
+                y: [-20, 20, -20],
+                rotateZ: [-2, 2, -2],
+                rotateX: [0, 5, 0],
               }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="relative w-full h-[85%] bg-white rounded-[40px] p-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden"
             >
               <div className="w-full h-full rounded-[30px] bg-slate-50 overflow-hidden relative border border-slate-100">
-                {/* Replace with your specific project screenshot or high-res abstract */}
-                <img
+                <motion.img
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 1.5 }}
                   src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                  className="w-full h-full object-cover"
                   alt="AI Visual"
                 />
-                {/* Glass Overlay on Image */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
               </div>
             </motion.div>
 
-            {/* Floating Widget 1: Status */}
+            {/* Floating Widget 1: Status - Faster float */}
             <motion.div
-              animate={{ y: [10, -10, 10] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              animate={{
+                y: [15, -15, 15],
+                x: [-5, 5, -5],
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -top-4 -right-2 md:-right-8 bg-white/90 backdrop-blur-xl p-5 rounded-3xl shadow-2xl border border-white/50 z-30"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600"
+                >
                   <Cpu size={24} />
-                </div>
+                </motion.div>
                 <div>
                   <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
                     System Status
@@ -415,17 +437,21 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
               </div>
             </motion.div>
 
-            {/* Floating Widget 2: Rating */}
+            {/* Floating Widget 2: Rating - Slower float */}
             <motion.div
-              animate={{ y: [-10, 10, -10] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              animate={{
+                y: [-12, 12, -12],
+                rotate: [2, -2, 2],
+              }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -bottom-6 -left-2 md:-left-12 bg-slate-900 text-white p-6 rounded-[32px] shadow-2xl z-30 flex items-center gap-4"
             >
               <div className="flex -space-x-2">
                 {[1, 2, 3].map((i) => (
-                  <img
+                  <motion.img
                     key={i}
-                    className="w-8 h-8 rounded-full border-2 border-slate-900"
+                    whileHover={{ y: -5, zIndex: 50 }}
+                    className="w-8 h-8 rounded-full border-2 border-slate-900 cursor-pointer"
                     src={`https://i.pravatar.cc/100?img=${i + 10}`}
                     alt="user"
                   />
