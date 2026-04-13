@@ -16,15 +16,19 @@ import {
   Sparkles,
   UserCheck,
   AlertCircle,
+  ArrowUpRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useAppSelector } from "@/Store/hooks";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 export default function ProfileDashboard() {
   const { data: session, update } = useSession();
-  console.log("session", session);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { bookmarkIds } = useAppSelector((state) => state.user);
+  const totalBookmarks = bookmarkIds.length;
 
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -56,30 +60,15 @@ export default function ProfileDashboard() {
   const isEmailValid = emailRegex.test(formData.email);
   const isNameValid = formData.name.trim().length >= 2;
 
+  // Mobile validation for PhoneInput (including country code it usually length > 10)
+  const isMobileValid = formData.mobile.length >= 8;
+
   const isModified = useMemo(() => {
     return JSON.stringify(originalData) !== JSON.stringify(formData);
   }, [formData, originalData]);
 
-  // Submit condition
-  const canSave = isModified && isEmailValid && isNameValid && !loading;
-
-  //   const handleImageClick = () => fileInputRef.current?.click();
-
-  //   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     const file = e.target.files?.[0];
-  //     if (file) {
-  //       if (file.size > 2 * 1024 * 1024) {
-  //         // 2MB Limit
-  //         return toast.error("Image size should be less than 2MB");
-  //       }
-  //       const reader = new FileReader();
-  //       reader.onloadend = () => {
-  //         setFormData((prev) => ({ ...prev, image: reader.result as string }));
-  //         toast.success("Preview updated!");
-  //       };
-  //       reader.readAsDataURL(file);
-  //     }
-  //   };
+  const canSave =
+    isModified && isEmailValid && isNameValid && isMobileValid && !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,7 +127,45 @@ export default function ProfileDashboard() {
   };
   return (
     <main className="min-h-screen bg-[#fcfdfe] text-slate-900 pb-24 relative overflow-hidden">
-      {/* Background Decor */}
+      {/* STEP 3: Global CSS to match your UI */}
+      <style jsx global>{`
+        .phone-input-container .form-control {
+          width: 100% !important;
+          background: #f8fafc !important; /* bg-slate-50 */
+          border: 1px solid #e2e8f0 !important; /* border-slate-200 */
+          border-radius: 1.5rem !important;
+          height: 60px !important;
+          padding-left: 58px !important;
+          font-weight: 700 !important;
+          color: #1e293b !important;
+          font-family: inherit !important;
+          transition: all 0.2s ease;
+        }
+        .phone-input-container .form-control:focus {
+          border-color: #3b82f6 !important;
+          background: white !important;
+          box-shadow: 0 0 0 1px #3b82f6 !important;
+        }
+        .phone-input-container .flag-dropdown {
+          background: transparent !important;
+          border: none !important;
+          border-radius: 1.5rem 0 0 1.5rem !important;
+        }
+        .phone-input-container .selected-flag {
+          background: transparent !important;
+          padding-left: 14px !important;
+        }
+        .phone-input-container .selected-flag:hover {
+          background: transparent !important;
+        }
+        .phone-input-container .country-list {
+          border-radius: 1rem !important;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+          border: 1px solid #f1f5f9 !important;
+          margin-top: 10px !important;
+        }
+      `}</style>
+
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-50 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-50 blur-[100px] rounded-full" />
@@ -183,25 +210,11 @@ export default function ProfileDashboard() {
                     <div className="w-full h-full rounded-[2.8rem] bg-white p-1 overflow-hidden relative">
                       <div className="w-full h-full rounded-[2.5rem] bg-slate-50 flex items-center justify-center overflow-hidden">
                         <span className="text-5xl font-black text-blue-600">
-                          {getInitials(formData.name) || "U"}{" "}
+                          {getInitials(formData.name)}
                         </span>
                       </div>
                     </div>
                   </div>
-                  {/* <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    accept="image/*"
-                    className="hidden"
-                  /> */}
-                  {/* <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="absolute -bottom-2 -right-2 p-3.5 bg-slate-950 text-white rounded-2xl border-4 border-white hover:bg-blue-600 transition-all shadow-xl scale-110"
-                  >
-                    <Camera size={20} />
-                  </button> */}
                 </div>
 
                 <div className="text-center mb-10">
@@ -214,22 +227,36 @@ export default function ProfileDashboard() {
                   </p>
                 </div>
 
-                <div className="w-full bg-slate-50 border border-slate-100 p-6 rounded-[2rem] flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
-                      <Bookmark size={20} className="fill-current" />
+                <Link href="/bookmarks" className="w-full">
+                  <motion.div
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-slate-50 border border-slate-100 p-6 rounded-[2rem] flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-white hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm border border-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <Bookmark size={20} className="fill-current" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors">
+                          Saved Tools
+                        </p>
+                        <p className="text-2xl font-black text-slate-900">
+                          {totalBookmarks}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        Saved Tools
-                      </p>
-                      <p className="text-2xl font-black text-slate-900">
-                        {(session?.user as any)?.bookmarkIds?.length || 0}
-                      </p>
+                    <div className="relative w-8 h-8 flex items-center justify-center">
+                      <Sparkles
+                        size={20}
+                        className="text-blue-200 group-hover:opacity-0 group-hover:scale-50 transition-all duration-300 absolute"
+                      />
+                      <div className="opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 text-blue-600 absolute bg-blue-50 p-2 rounded-xl">
+                        <ArrowUpRight size={18} strokeWidth={3} />
+                      </div>
                     </div>
-                  </div>
-                  <Sparkles size={20} className="text-blue-200" />
-                </div>
+                  </motion.div>
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -253,7 +280,6 @@ export default function ProfileDashboard() {
                   required
                   error={formData.name && !isNameValid}
                 />
-
                 <InputField
                   label="Email Address"
                   icon={<Mail size={18} />}
@@ -267,15 +293,33 @@ export default function ProfileDashboard() {
                   error={formData.email && !isEmailValid}
                 />
 
-                <InputField
-                  label="Mobile Number"
-                  icon={<Phone size={18} />}
-                  value={formData.mobile}
-                  onChange={(v: string) =>
-                    setFormData({ ...formData, mobile: v })
-                  }
-                  placeholder="+91 9521974551"
-                />
+                {/* STEP 4: Integrated Phone Input */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between ml-1">
+                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">
+                      Mobile Number
+                    </label>
+                  </div>
+                  <div className="phone-input-container">
+                    <PhoneInput
+                      country={"in"}
+                      value={formData.mobile}
+                      onChange={(phone, data: any) => {
+                        const countryCode = data.dialCode;
+                        const numberWithoutCode = phone.slice(
+                          countryCode.length,
+                        );
+                        const formattedNumber = `+${countryCode} ${numberWithoutCode}`;
+
+                        setFormData({ ...formData, mobile: formattedNumber });
+                      }}
+                      placeholder="Enter mobile number"
+                      enableSearch={true}
+                      prefix="+"
+                      specialLabel=""
+                    />
+                  </div>
+                </div>
 
                 <InputField
                   label="Profession"
