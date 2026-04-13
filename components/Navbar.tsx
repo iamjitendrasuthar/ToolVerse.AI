@@ -216,14 +216,15 @@ export default function Navbar() {
     }, 1000);
   };
   return (
-    <div className="fixed top-4 inset-x-0 z-50 flex justify-center w-full px-6 pointer-events-none">
+    <div className="fixed top-0 md:top-4 inset-x-0 z-50 flex justify-center w-full md:px-6 pointer-events-none">
+      {" "}
       <nav
-        className={`relative w-full max-w-[1400px] pointer-events-auto transition-all duration-500 ease-out rounded-2xl md:rounded-full border
-          ${
-            scrolled
-              ? "bg-white/80 backdrop-blur-2xl border-neutral-200/50 shadow-lg py-2"
-              : "bg-white/70 backdrop-blur-xl border-white/60 shadow-xl py-3"
-          }
+        className={`relative w-full max-w-[1400px] pointer-events-auto transition-all duration-500 ease-out md:rounded-2xl md:rounded-full border
+    ${
+      scrolled
+        ? "bg-white/80 backdrop-blur-2xl border-neutral-200/50 shadow-lg py-2"
+        : "bg-white/70 backdrop-blur-xl border-white/60 md:shadow-xl py-3"
+    }
         `}
       >
         <div className="px-4 md:px-6">
@@ -642,15 +643,15 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
 
         {/* --- MOBILE NAV (The Full ToolsVerse AI Experience) --- */}
         <div
-          className={`lg:hidden absolute inset-x-0 top-full mt-4 z-50 transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) ${
+          className={`lg:hidden absolute inset-x-0 top-full md:mt-4 z-50 transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) ${
             isOpen
               ? "opacity-100 translate-y-0 visible"
               : "opacity-0 -translate-y-8 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white/95 backdrop-blur-3xl border border-white/50 rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col max-h-[82vh]">
+          <div className="bg-white/95 backdrop-blur-3xl border border-white/50 md:rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col max-h-[80vh]">
             {/* 2. Scrollable Content Area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto custom-scrollbar md:p-4 space-y-4">
               {/* SECTION A: Static Main Links (Full-Width Flat Design) */}
               <div className="flex flex-col gap-2 px-1">
                 {navLinks
