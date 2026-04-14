@@ -652,8 +652,8 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
           <div className="bg-white/95 backdrop-blur-2xl overflow-hidden flex flex-col max-h-[75vh] rounded-2xl">
             {/* 1. Scrollable Main Content Area */}
             <div className="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-6">
-              {/* SECTION A: Quick Links (Compact Grid) 
-              */}
+              {/* SECTION A: Quick Links (Compact Grid)
+               */}
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400 pl-2 mb-3 block">
                   Quick Links

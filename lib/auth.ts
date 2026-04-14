@@ -2,9 +2,14 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -42,19 +47,52 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google") {
+        try {
+          // Check karein ki user DB mein hai ya nahi
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email! },
+          });
+
+          // Agar naya user hai toh DB mein create karein
+          if (!existingUser) {
+            await prisma.user.create({
+              data: {
+                name: user.name!,
+                email: user.email!,
+                // Social login users ka password null rahega
+                image: user.image,
+              },
+            });
+          }
+          return true;
+        } catch (error) {
+          console.error("Error saving google user:", error);
+          return false;
+        }
+      }
+      return true; // Credentials login ke liye true return karein
+    },
+
     async jwt({ token, user, trigger, session }) {
-      // ✅ Step 2: Initial Login par user ka data token (cookie) mein save karein
+      // 1. Initial Login (Credentials ya Social)
       if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
-        // @ts-ignore
-        token.mobile = user.mobile;
-        // @ts-ignore
-        token.profession = user.profession;
+        // Agar social login hai, toh DB se fresh data uthayein (mobile, profession ke liye)
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.name = dbUser.name;
+          token.email = dbUser.email;
+          token.mobile = dbUser.mobile;
+          token.profession = dbUser.profession;
+        }
       }
 
-      // ✅ Step 3: Profile Edit ke baad session.update() ko handle karein
+      // 2. Profile Update (Frontend se)
       if (trigger === "update" && session?.user) {
         token.name = session.user.name ?? token.name;
         token.email = session.user.email ?? token.email;
@@ -67,8 +105,6 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (session.user) {
-        // ✅ Step 4: Token se nikal kar session API (frontend) mein data bhejna
-        // Yeh step sabse zaruri hai jo aapke code mein missing tha
         // @ts-ignore
         session.user.id = token.id;
         session.user.name = token.name;

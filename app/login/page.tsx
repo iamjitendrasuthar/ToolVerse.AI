@@ -90,8 +90,16 @@ export default function AuthPage() {
     }
   };
 
-  const handleSocialAuth = (provider: string) => {
-    signIn(provider, { callbackUrl: "/" });
+  const handleSocialAuth = async (provider: string) => {
+    setIsLoading(true);
+    try {
+      await signIn(provider, {
+        callbackUrl: "/",
+      });
+    } catch (err) {
+      toast.error(`${provider} login failed. Please try again.`);
+      setIsLoading(false);
+    }
   };
 
   return (
