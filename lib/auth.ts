@@ -58,11 +58,10 @@ export const authOptions: NextAuthOptions = {
           // Agar naya user hai toh DB mein create karein
           if (!existingUser) {
             await prisma.user.create({
+              // @ts-ignore
               data: {
                 name: user.name!,
                 email: user.email!,
-                // Social login users ka password null rahega
-                image: user.image,
               },
             });
           }
