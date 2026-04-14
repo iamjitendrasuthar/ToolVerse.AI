@@ -84,7 +84,8 @@ export default function ProfileEditClient({ user }: { user: any }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Avatar & Quick Info */}
           <motion.div
-            variants={fadeUp}
+            // @ts-ignore
+            variants={fadeUp as any}
             initial="hidden"
             animate="show"
             className="lg:col-span-4 space-y-6"
@@ -124,7 +125,8 @@ export default function ProfileEditClient({ user }: { user: any }) {
 
           {/* Right Column: Edit Form */}
           <motion.div
-            variants={fadeUp}
+            // @ts-ignore
+            variants={fadeUp as any}
             initial="hidden"
             animate="show"
             transition={{ delay: 0.1 }}
