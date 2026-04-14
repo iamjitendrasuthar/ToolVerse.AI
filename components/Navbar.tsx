@@ -649,7 +649,7 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
               : "opacity-0 -translate-y-8 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white/95 backdrop-blur-2xl border border-neutral-200/50 md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] rounded-2xl">
+          <div className="bg-white/95 backdrop-blur-2xl overflow-hidden flex flex-col max-h-[80vh] rounded-2xl">
             {/* 1. Scrollable Main Content Area */}
             <div className="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-6">
               {/* SECTION A: Quick Links (Compact Grid) 
