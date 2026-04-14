@@ -649,41 +649,35 @@ group-hover/menu:translate-y-0 absolute top-full right-0 mt-3 w-64 rounded-[2rem
               : "opacity-0 -translate-y-8 invisible pointer-events-none"
           }`}
         >
-          <div className="bg-white/95 backdrop-blur-3xl border border-white/50 md:rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col max-h-[80vh]">
-            {/* 2. Scrollable Content Area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar md:p-4 space-y-4">
-              {/* SECTION A: Static Main Links (Full-Width Flat Design) */}
-              <div className="flex flex-col gap-2 px-1">
-                {navLinks
-                  .filter((link) => !link.isDropdown)
-                  .map((link) => (
-                    <Link
-                      key={link.name}
-                      href={link.href as string}
-                      onClick={() => setIsOpen(false)}
-                      className="group relative flex items-center gap-4 p-4 bg-neutral-50/50 border border-neutral-100 rounded-[1.5rem] transition-all duration-300 active:scale-[0.98] hover:bg-white hover:border-blue-500/30"
-                    >
-                      {/* Left Side: Clean Icon Square */}
-                      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white border border-neutral-100 text-neutral-500 group-hover:text-blue-600 group-hover:border-blue-100 transition-all duration-300">
-                        <link.icon size={22} strokeWidth={2} />
-                      </div>
-
-                      {/* Center: Title & Subtext */}
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[15px] font-bold text-neutral-800 group-hover:text-blue-600 transition-colors tracking-tight">
+          <div className="bg-white/95 backdrop-blur-2xl border border-neutral-200/50 md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] m-2 rounded-2xl">
+            {/* 1. Scrollable Main Content Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-6">
+              {/* SECTION A: Quick Links (Compact Grid) 
+                  Isse bohot saari vertical space bachegi aur users ko bina scroll kiye sab dikhega 
+              */}
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400 pl-2 mb-3 block">
+                  Quick Links
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {navLinks
+                    .filter((link) => !link.isDropdown)
+                    .map((link) => (
+                      <Link
+                        key={link.name}
+                        href={link.href as string}
+                        onClick={() => setIsOpen(false)}
+                        className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-colors group"
+                      >
+                        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-neutral-100/80 text-neutral-600 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                          <link.icon size={20} strokeWidth={1.5} />
+                        </div>
+                        <span className="text-[11px] font-bold text-neutral-600 group-hover:text-neutral-900">
                           {link.name}
                         </span>
-                        <span className="text-[11px] font-medium text-neutral-400">
-                          Discover {link.name.toLowerCase()}
-                        </span>
-                      </div>
-
-                      {/* Right Side: Minimal Arrow */}
-                      <div className="ml-auto w-8 h-8 flex items-center justify-center rounded-full text-neutral-300 group-hover:text-blue-600 group-hover:bg-blue-50 transition-all">
-                        <ArrowRight size={18} />
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    ))}
+                </div>
               </div>
 
               {/* SECTION B: Deep Dive Accordions (Categories & Use Cases) */}
