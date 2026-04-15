@@ -355,7 +355,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                 <input
                   type="text"
                   readOnly
-                  placeholder="What do you want to build today?"
+                  placeholder="Explore 1000+ tools..."
                   className="w-full py-3 bg-transparent text-slate-800 placeholder:text-slate-400 outline-none text-base md:text-lg font-medium cursor-pointer"
                 />
               </div>
@@ -401,7 +401,7 @@ export default function HomeClient({ categoryData }: { categoryData: any[] }) {
                 <motion.img
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 1.5 }}
-                  src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200"
                   className="w-full h-full object-cover"
                   alt="AI Visual"
                 />
