@@ -12,7 +12,7 @@ export default async function ToolPage({
   const slug = resolvedParams.slug;
 
   await connectToDatabase();
-
+  // @ts-ignore
   const tool = await Tool.findOne({ slug: slug }).lean();
 
   if (!tool) {
