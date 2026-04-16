@@ -20,7 +20,7 @@ export default async function ToolPage({
   }
 
   const allTools = await Tool.find(
-    {},
+    {} as any,
     "name slug rating pricing category websiteUrl aiType difficultyLevel integrations platforms languages",
   ).lean();
 
