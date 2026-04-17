@@ -8,17 +8,27 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const authPages = ["/login", "/forgot-password", "/reset-password"];
-  const isAuthPage = authPages.includes(req.nextUrl.pathname);
+  const { pathname } = req.nextUrl;
 
-  // Agar user already logged in hai aur auth page open kare
+  const authPages = ["/login", "/forgot-password", "/reset-password"];
+  const protectedPages = ["/bookmarks"];
+
+  const isAuthPage = authPages.includes(pathname);
+  const isProtectedPage = protectedPages.includes(pathname);
+
+  // 🔒 CASE 1: Logged-in user should NOT access auth pages
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // 🔒 CASE 2: Logged-out user should NOT access protected pages
+  if (!token && isProtectedPage) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/forgot-password", "/reset-password"],
+  matcher: ["/login", "/forgot-password", "/reset-password", "/bookmarks"],
 };
