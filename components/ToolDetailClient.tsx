@@ -651,7 +651,6 @@ export default function ToolDetailClient({
                     icon: <BsInstagram size={24} />,
                     color: "text-pink-600",
                     bg: "bg-pink-50",
-                    action: "copy",
                   },
                   {
                     name: "Copy Link",
@@ -667,6 +666,16 @@ export default function ToolDetailClient({
                     whileTap={{ scale: 0.95 }}
                     href={item.link || "#"}
                     onClick={(e) => {
+                      if (item.name === "Instagram") {
+                        navigator.clipboard.writeText(rawUrl);
+                        toast.success("Copied! Paste on Instagram");
+
+                        setTimeout(() => {
+                          window.open("https://www.instagram.com/", "_blank");
+                        }, 1000);
+
+                        return;
+                      }
                       if (item.action === "copy") {
                         e.preventDefault();
                         // RAW URL copy karo taaki http:// dikhe, %3A%2F%2F nahi
