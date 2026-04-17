@@ -18,11 +18,17 @@ import {
   X,
   Plus,
   ChevronDown,
+  MessageCircle,
+  Copy,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BsInstagram, BsTwitter } from "react-icons/bs";
+import { LiaLinkedin } from "react-icons/lia";
+import { FaFacebook } from "react-icons/fa";
+import { toast } from "sonner";
 
 export default function ToolDetailClient({
   tool,
@@ -37,6 +43,8 @@ export default function ToolDetailClient({
   const [compareWith, setCompareWith] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   // Search Logic for Comparison Modal
   const availableTools = useMemo(() => {
@@ -70,10 +78,14 @@ export default function ToolDetailClient({
     },
     { label: "Rating", key: "rating", icon: <Star size={14} />, suffix: "/ 5" },
   ];
-  const [isExpanded, setIsExpanded] = useState(false);
   const visibleSpecs = isExpanded
     ? comparisonSpecs
     : comparisonSpecs.slice(0, 3);
+
+  // 1. URL aur Text Logic Fix
+  const rawUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareUrl = encodeURIComponent(rawUrl);
+  const shareText = encodeURIComponent(`Check out ${tool.name} 🚀`);
   return (
     <main className="min-h-screen bg-[#fafcff] text-slate-900 pb-20 selection:bg-blue-100">
       {/* Background Decor */}
@@ -461,7 +473,10 @@ export default function ToolDetailClient({
                   Visit Official Site <ExternalLink size={18} />
                 </a>
 
-                <button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
+                <button
+                  onClick={() => setIsShareOpen(true)}
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
+                >
                   <Share2 size={18} /> Share Tool
                 </button>
 
@@ -493,7 +508,7 @@ export default function ToolDetailClient({
         </div>
       </div>
 
-      {/* --- SEARCH MODAL (Same logic as your HomeClient) --- */}
+      {/* --- SEARCH MODAL --- */}
       <AnimatePresence>
         {isSearchOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -557,6 +572,131 @@ export default function ToolDetailClient({
                     </div>
                   </button>
                 ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- SHARE MODAL --- */}
+      <AnimatePresence>
+        {isShareOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            {/* Overlay - Soft & Light Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsShareOpen(false)}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            />
+
+            {/* Modal - Clean White Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              className="relative w-full max-w-sm bg-white border border-slate-100 rounded-[2.5rem] shadow-[-10px_-10px_30px_rgba(255,255,255,0.5),10px_10px_30px_rgba(70,70,70,0.1)] p-8 overflow-hidden"
+            >
+              {/* Subtle Light Glow Effect - Optional, but adds depth */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-50 blur-[80px] rounded-full" />
+
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8 relative z-10">
+                {/* Changed text color to slate-950 (near black) */}
+                <h3 className="text-2xl font-bold text-slate-950 tracking-tight">
+                  Share
+                </h3>
+                <button
+                  onClick={() => setIsShareOpen(false)}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 rounded-full transition-all"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Social Grid */}
+              <div className="grid grid-cols-3 gap-6 relative z-10">
+                {[
+                  {
+                    name: "WhatsApp",
+                    icon: <MessageCircle size={24} />,
+                    color: "text-green-600", // Darker green for contrast
+                    bg: "bg-green-50", // Lighter background
+                    link: `https://wa.me/?text=${shareText}%20${shareUrl}`,
+                  },
+                  {
+                    name: "Twitter",
+                    icon: <BsTwitter size={24} />,
+                    color: "text-sky-600",
+                    bg: "bg-sky-50",
+                    link: `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`,
+                  },
+                  {
+                    name: "Facebook",
+                    icon: <FaFacebook size={24} />,
+                    color: "text-blue-700",
+                    bg: "bg-blue-50",
+                    link: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+                  },
+                  {
+                    name: "LinkedIn",
+                    icon: <LiaLinkedin size={24} />,
+                    color: "text-indigo-700",
+                    bg: "bg-indigo-50",
+                    link: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
+                  },
+                  {
+                    name: "Instagram",
+                    icon: <BsInstagram size={24} />,
+                    color: "text-pink-600",
+                    bg: "bg-pink-50",
+                    action: "copy",
+                  },
+                  {
+                    name: "Copy Link",
+                    icon: <Copy size={24} />,
+                    color: "text-slate-600",
+                    bg: "bg-slate-100",
+                    action: "copy",
+                  },
+                ].map((item, idx) => (
+                  <motion.a
+                    key={idx}
+                    whileHover={{ y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={item.link || "#"}
+                    onClick={(e) => {
+                      if (item.action === "copy") {
+                        e.preventDefault();
+                        // RAW URL copy karo taaki http:// dikhe, %3A%2F%2F nahi
+                        navigator.clipboard.writeText(rawUrl);
+                        toast.success(`${tool.name} link copied!`);
+                      }
+                    }}
+                    className="flex flex-col items-center gap-3 group"
+                  >
+                    <div
+                      className={`w-14 h-14 ${item.bg} ${item.color} flex items-center justify-center rounded-2xl border border-white/50 group-hover:border-slate-200 transition-all shadow-inner`}
+                    >
+                      {item.icon}
+                    </div>
+                    {/* Updated text color for light theme */}
+                    <span className="text-[11px] font-semibold text-slate-500 group-hover:text-slate-900 uppercase tracking-widest transition-colors">
+                      {item.name}
+                    </span>
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Quick URL Footer */}
+              <div className="mt-8 p-3 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between">
+                <span className="text-xs text-slate-500 truncate mr-4 italic">
+                  {rawUrl}
+                </span>
+                <div className="text-[10px] text-blue-600 font-bold uppercase tracking-tighter">
+                  Live Link
+                </div>
               </div>
             </motion.div>
           </div>
