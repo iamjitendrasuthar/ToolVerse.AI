@@ -11,7 +11,7 @@ import {
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/Store/hooks";
 import { fetchTools } from "@/Store/slices/toolSlice";
 import {
@@ -155,7 +155,30 @@ export default function ToolGrid({ CategoryWisetools, categoryName }: Props) {
 
     return images[categoryName]?.[index % 3] || images["Coding Tools"][0];
   };
+  function ToolImage({ tool }: { tool: any }) {
+    const [error, setError] = useState(false);
 
+    if (!tool.imageUrl || error) {
+      return (
+        <div className="w-full h-full flex items-center justify-center bg-black/90 relative overflow-hidden">
+          <div className="text-center px-3">
+            <div className="text-lg sm:text-xl font-extrabold text-white tracking-tight">
+              {tool.name}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={tool.imageUrl}
+        alt={tool.name}
+        onError={() => setError(true)}
+        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+      />
+    );
+  }
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
       {updatedTools.length > 0 ? (
@@ -188,13 +211,9 @@ export default function ToolGrid({ CategoryWisetools, categoryName }: Props) {
               {/* Image */}
               <div className="h-[100px] w-full relative overflow-hidden bg-slate-100 p-1.5">
                 <div className="w-full h-full rounded-xl overflow-hidden relative border border-slate-200/50">
-                  <img
-                    src={
-                      tool.imageUrl || getCategoryImage(categoryName, toolIndex)
-                    }
-                    alt={`${tool.name} banner`}
-                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
+                  <div className="w-full h-full flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                    <ToolImage tool={tool} />
+                  </div>
                 </div>
               </div>
 
