@@ -52,10 +52,19 @@ import {
   DollarSign,
   Edit3,
   LogOut,
+  Edit,
+  ShoppingCart,
+  ClipboardList,
+  Wallet,
+  Building2,
+  Puzzle,
+  School,
+  Wand2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { fetchBookmarks } from "@/Store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/Store/hooks";
+import { CgYoutube } from "react-icons/cg";
 
 export default function Navbar() {
   const dispatch = useAppDispatch();
@@ -138,22 +147,60 @@ export default function Navbar() {
     },
     { name: "For Sales Teams", href: "/use-case/sales", icon: DollarSign },
     { name: "For HR & Recruiting", href: "/use-case/hr", icon: Users },
-
-    // Task Based
-    { name: "Writing Blogs", href: "/use-case/blog-writing", icon: Edit3 },
-    { name: "SEO Optimization", href: "/use-case/seo", icon: Search },
-    { name: "Data Analysis", href: "/use-case/data-analysis", icon: BarChart3 },
     {
-      name: "Customer Support",
-      href: "/use-case/customer-support",
+      name: "For Content Creators",
+      href: "/use-case/content-creators",
+      icon: Edit,
+    },
+    {
+      name: "For Social Media Managers",
+      href: "/use-case/social-media",
+      icon: Share2,
+    },
+    { name: "For YouTubers", href: "/use-case/youtubers", icon: CgYoutube },
+    { name: "For Bloggers", href: "/use-case/bloggers", icon: BookOpen },
+    { name: "For SEO Experts", href: "/use-case/seo", icon: Search },
+    { name: "For Freelancers", href: "/use-case/freelancers", icon: Briefcase },
+    {
+      name: "For Business Owners",
+      href: "/use-case/business",
+      icon: Building2,
+    },
+    { name: "For E-commerce", href: "/use-case/ecommerce", icon: ShoppingCart },
+    {
+      name: "For Customer Support",
+      href: "/use-case/support",
       icon: Headphones,
     },
     {
-      name: "Idea Brainstorming",
-      href: "/use-case/brainstorming",
-      icon: Lightbulb,
+      name: "For Product Managers",
+      href: "/use-case/product",
+      icon: ClipboardList,
     },
-    { name: "Translation", href: "/use-case/translation", icon: Languages },
+    {
+      name: "For Data Analysts",
+      href: "/use-case/data-analyst",
+      icon: BarChart3,
+    },
+    {
+      name: "For Finance & Accounting",
+      href: "/use-case/finance",
+      icon: Wallet,
+    },
+    { name: "For AI Automation", href: "/use-case/automation", icon: Bot },
+    { name: "For No-Code Builders", href: "/use-case/no-code", icon: Puzzle },
+    {
+      name: "For Prompt Engineers",
+      href: "/use-case/prompt-engineer",
+      icon: Wand2,
+    },
+    {
+      name: "For Side Hustles",
+      href: "/use-case/side-hustle",
+      icon: TrendingUp,
+    },
+    { name: "For Remote Work", href: "/use-case/remote-work", icon: Globe },
+    { name: "For Educators", href: "/use-case/teachers", icon: School },
   ];
 
   // 3. Main Navigation Links
